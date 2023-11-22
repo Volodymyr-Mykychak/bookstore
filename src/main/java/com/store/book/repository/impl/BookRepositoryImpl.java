@@ -3,35 +3,59 @@ package com.store.book.repository.impl;
 import com.store.book.model.Book;
 import com.store.book.repository.BookRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@RequiredArgsConstructor
 @Repository
 public class BookRepositoryImpl implements BookRepository {
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
 
-    @Transactional
     @Override
     public Book save(Book book) {
-        try {
+        EntityTransaction transaction = null;
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
             entityManager.persist(book);
+            transaction.commit();
             return book;
-        } catch (Exception e) {
-            throw new RuntimeException("Can't save book to DB", e);
+        } catch (RuntimeException e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            Book book = entityManager.find(Book.class, id);
+            return Optional.ofNullable(book);
         }
     }
 
     @Override
     public List<Book> findAll() {
-        try {
-            return entityManager.createQuery(
-                    "SELECT u FROM Book u", Book.class).getResultList();
-        } catch (Exception e) {
-            throw new RuntimeException("Can't get all products from DB", e);
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery("SELECT e FROM Book e", Book.class).getResultList();
+        }
+    }
+
+    @Override
+    public List<Book> findAllByTitle(String title) {
+        String lowerCaseName = title.toLowerCase();
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager
+                    .createQuery("SELECT e FROM Book e WHERE lower(e.title) "
+                            + "LIKE :title", Book.class)
+                    .setParameter("title", "%" + lowerCaseName + "%")
+                    .getResultList();
         }
     }
 }
