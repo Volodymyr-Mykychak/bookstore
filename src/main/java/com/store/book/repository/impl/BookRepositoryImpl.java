@@ -1,5 +1,6 @@
 package com.store.book.repository.impl;
 
+import com.store.book.exception.BookRepositoryException;
 import com.store.book.model.Book;
 import com.store.book.repository.BookRepository;
 import jakarta.persistence.EntityManager;
@@ -28,7 +29,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
-            throw e;
+            throw new BookRepositoryException("Error saving book: " + book, e);
         }
     }
 
@@ -37,6 +38,8 @@ public class BookRepositoryImpl implements BookRepository {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             Book book = entityManager.find(Book.class, id);
             return Optional.ofNullable(book);
+        } catch (Exception e) {
+            throw new BookRepositoryException("Error finding book with id: " + id, e);
         }
     }
 
@@ -44,6 +47,8 @@ public class BookRepositoryImpl implements BookRepository {
     public List<Book> findAll() {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             return entityManager.createQuery("SELECT e FROM Book e", Book.class).getResultList();
+        } catch (Exception e) {
+            throw new BookRepositoryException("Error retrieving all books", e);
         }
     }
 
@@ -56,6 +61,8 @@ public class BookRepositoryImpl implements BookRepository {
                             + "LIKE :title", Book.class)
                     .setParameter("title", "%" + lowerCaseName + "%")
                     .getResultList();
+        } catch (Exception e) {
+            throw new BookRepositoryException("Error finding books with title: " + title, e);
         }
     }
 }
