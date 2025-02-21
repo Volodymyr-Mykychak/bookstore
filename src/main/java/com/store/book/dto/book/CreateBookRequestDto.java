@@ -1,5 +1,6 @@
 package com.store.book.dto.book;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import lombok.Data;
