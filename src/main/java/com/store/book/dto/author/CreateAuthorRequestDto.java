@@ -1,4 +1,8 @@
-package com.store.book.dto;
+package com.store.book.dto.author;
 
-public class CreateAuthorRequestDto {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record CreateAuthorRequestDto(String name, String bio) {
+
 }

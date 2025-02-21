@@ -1,20 +1,18 @@
-package com.store.book.service.book.impl;
+package com.store.book.service.book;
 
-import java.util.List;
 import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.CreateBookRequestDto;
+import java.util.List;
 
 public interface BookService {
     BookDto save(CreateBookRequestDto requestDto);
 
     List<BookDto> findAll();
 
-    BookDto getById(Long id);
-
     List<BookDto> findAllByTitle(String title);
 
-    List<BookDto> deleteById(Long id);
+    BookDto findById(Long id);
 
-    List<BookDto> updateBook(Long id, CreateBookRequestDto bookDto);
+    void deleteById(Long id);
 
 }
