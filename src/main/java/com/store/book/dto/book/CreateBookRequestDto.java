@@ -1,5 +1,4 @@
-package com.store.book.dto.book;
-
+package com.store.book.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
@@ -9,9 +8,8 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateBookRequestDto {
     private String title;
-    private String isbn;
+    private String author;
     private BigDecimal price;
     private String description;
     private String coverImage;
-    private Long authorId;
 }
