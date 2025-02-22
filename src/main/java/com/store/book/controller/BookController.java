@@ -2,7 +2,7 @@ package com.store.book.controller;
 
 import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.CreateBookRequestDto;
-import com.store.book.service.book.BookService;
+import com.store.book.service.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
