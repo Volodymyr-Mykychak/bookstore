@@ -2,16 +2,14 @@ package com.store.book.repository;
 
 import com.store.book.model.Book;
 import java.util.List;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookRepository {
-    Book save(Book book);
+public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Optional<Book> findById(Long id);
+    @Query("SELECT b FROM Book b WHERE UPPER(b.title) LIKE UPPER(:title)")
+    List<Book> findAllByTitleContainingIgnoreCase(String title);
 
-    List<Book> findAll();
-
-    List<Book> findAllByTitle(String title);
 }
