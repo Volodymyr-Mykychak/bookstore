@@ -9,7 +9,10 @@ public interface BookService {
 
     List<BookDto> findAll();
 
+    List<BookDto> findAllByTitle(String title);
+
     BookDto findById(Long id);
 
-    List<BookDto> getAllByTitle(String title);
+    void deleteById(Long id);
+
 }
