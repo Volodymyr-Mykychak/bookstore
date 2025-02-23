@@ -36,15 +36,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> findAllByTitle(String title) {
-
-        return bookRepository.findAllByTitleContainingIgnoreCase(title)
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
-    }
-
-    @Override
     public BookDto findById(Long id) {
 
         Book book = bookRepository.findById(id).orElseThrow(() ->
@@ -55,12 +46,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(Long id) {
 
-        bookRepository.findById(id).ifPresentOrElse(
-                bookRepository::delete,
-                () -> {
-                    throw new EntityNotFoundException(
-                            "Can't delete, book with id "
-                                    + id + " not found.");
-                });
+        bookRepository.deleteById(id);
     }
 }

@@ -35,7 +35,7 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: is_deleted
-                  type: boolean
-                  defaultValueBoolean: false
+                  type: tinyint(1)
+                  defaultValueBoolean: 0
                   constraints:
                     nullable: false

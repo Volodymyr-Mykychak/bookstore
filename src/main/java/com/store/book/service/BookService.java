@@ -9,8 +9,6 @@ public interface BookService {
 
     List<BookDto> findAll();
 
-    List<BookDto> findAllByTitle(String title);
-
     BookDto findById(Long id);
 
     void deleteById(Long id);
