@@ -20,7 +20,7 @@ public class TitleSpecificationProvider implements SpecificationProvider<Book> {
     public Specification<Book> getSpecification(String[] params) {
 
         return (root, query, criteriaBuilder)
-                -> root.get("title")
+                -> root.get(BookSpecificationField.TITLE.getKey())
                 .in(Arrays.stream(params).toArray());
     }
 }

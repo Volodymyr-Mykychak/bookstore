@@ -20,7 +20,7 @@ public class IsbnSpecificationProvider implements SpecificationProvider<Book> {
     public Specification<Book> getSpecification(String[] params) {
 
         return (root, query, criteriaBuilder)
-                -> root.get("isbn")
+                -> root.get(BookSpecificationField.ISBN.getKey())
                 .in(Arrays.stream(params).toArray());
     }
 }

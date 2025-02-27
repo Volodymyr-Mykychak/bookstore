@@ -20,6 +20,7 @@ public class AuthorSpecificationProvider implements SpecificationProvider<Book> 
     public Specification<Book> getSpecification(String[] params) {
 
         return (root, query, criteriaBuilder)
-                -> root.get("author").in(Arrays.stream(params).toArray());
+                -> root.get(BookSpecificationField.AUTHOR.getKey())
+                .in(Arrays.stream(params).toArray());
     }
 }
