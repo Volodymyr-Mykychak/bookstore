@@ -4,6 +4,7 @@ import com.store.book.dto.BookSearchParametersDto;
 import com.store.book.model.Book;
 import com.store.book.repository.SpecificationBuilder;
 import com.store.book.repository.SpecificationProviderManager;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -16,26 +17,25 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
 
     @Override
     public Specification<Book> build(BookSearchParametersDto searchParametersDto) {
-
         Specification<Book> spec = Specification.where(null);
-        if (searchParametersDto.title() != null
-                && searchParametersDto.title().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("title")
-                    .getSpecification(searchParametersDto.title()));
-        }
-        if (searchParametersDto.author() != null
-                && searchParametersDto.author().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("author")
-                    .getSpecification(searchParametersDto.author()));
-        }
-        if (searchParametersDto.isbn() != null
-                && searchParametersDto.isbn().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager
-                    .getSpecificationProvider("isbn")
-                    .getSpecification(searchParametersDto.isbn()));
+
+        Map<BookSpecificationField, String[]> filters = Map.of(
+                BookSpecificationField.TITLE, getValues(searchParametersDto.title()),
+                BookSpecificationField.AUTHOR, getValues(searchParametersDto.author()),
+                BookSpecificationField.ISBN, getValues(searchParametersDto.isbn())
+        );
+
+        for (var entry : filters.entrySet()) {
+            if (entry.getValue().length > 0) {
+                spec = spec.and(bookSpecificationProviderManager
+                        .getSpecificationProvider(entry.getKey().getKey())
+                        .getSpecification(entry.getValue()));
+            }
         }
         return spec;
+    }
+
+    private String[] getValues(String[] values) {
+        return (values != null && values.length > 0) ? values : new String[0];
     }
 }
