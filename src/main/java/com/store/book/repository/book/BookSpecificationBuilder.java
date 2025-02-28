@@ -12,13 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
-
     private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
     @Override
     public Specification<Book> build(BookSearchParametersDto searchParametersDto) {
         Specification<Book> spec = Specification.where(null);
-
         Map<BookSpecificationField, String[]> filters = Map.of(
                 BookSpecificationField.TITLE, getValues(searchParametersDto.title()),
                 BookSpecificationField.AUTHOR, getValues(searchParametersDto.author()),

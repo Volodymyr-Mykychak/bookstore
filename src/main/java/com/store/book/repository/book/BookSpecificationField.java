@@ -6,7 +6,6 @@ public enum BookSpecificationField {
     ISBN("isbn");
 
     private final String key;
-
     BookSpecificationField(String key) {
         this.key = key;
     }
