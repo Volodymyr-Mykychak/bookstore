@@ -10,22 +10,22 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true) // Ігнорує невідомі поля у JSON
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateBookRequestDto {
-    @NotBlank(message = "Назва книги не може бути пустою") // Забороняє null і пустий рядок
-    @Size(min = 2, message = "Назва книги повинна містити мінімум 2 символи")
+    @NotBlank(message = "Book title must not be empty")
+    @Size(min = 2, message = "Book title must be at least 2 characters long")
     private String title;
-    @NotBlank(message = "Автор книги не може бути пустим")
+    @NotBlank(message = "Author must not be empty")
     private String author;
-    @NotBlank(message = "ISBN не може бути пустим")
-    @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Некоректний формат ISBN")
+    @NotBlank(message = "ISBN must not be empty")
+    @Pattern(regexp = "^(97(8|9))?\\d{9}(\\d|X)$", message = "Invalid ISBN format")
     private String isbn;
-    @NotNull(message = "Ціна не може бути відсутня")
-    @DecimalMin(value = "0.1", inclusive = true, message = "Ціна повинна бути більше 0")
+    @NotNull(message = "Price must not be null")
+    @DecimalMin(value = "0.1", inclusive = true, message = "Price must be greater than 0")
     private BigDecimal price;
-    @Size(max = 500, message = "Опис книги не може бути довшим за 500 символів")
+    @Size(max = 500, message = "Book description must not exceed 500 characters")
     private String description;
-    @NotBlank(message = "Посилання на обкладинку книги не може бути порожнім")
+    @NotBlank(message = "Book cover URL must not be empty")
     private String coverImage;
 }
 
