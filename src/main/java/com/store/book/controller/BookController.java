@@ -4,6 +4,7 @@ import com.store.book.dto.BookDto;
 import com.store.book.dto.BookSearchParametersDto;
 import com.store.book.dto.CreateBookRequestDto;
 import com.store.book.service.BookService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,31 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/books")
 public class BookController {
-
     private final BookService bookService;
 
     @PostMapping
-    public BookDto save(@RequestBody CreateBookRequestDto bookDto) {
-
+    public BookDto save(@Valid @RequestBody CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
     }
 
     @GetMapping
     public List<BookDto> findAll() {
-
         return bookService.findAll();
     }
 
     @GetMapping("/{id}")
     public BookDto get(@PathVariable Long id) {
-
         return bookService.findById(id);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-
         bookService.deleteById(id);
     }
 
