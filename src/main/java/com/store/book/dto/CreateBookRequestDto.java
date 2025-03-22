@@ -25,7 +25,6 @@ public class CreateBookRequestDto {
     private BigDecimal price;
     @Size(max = 500, message = "Book description must not exceed 500 characters")
     private String description;
-    @NotBlank(message = "Book cover URL must not be empty")
     private String coverImage;
 }
 

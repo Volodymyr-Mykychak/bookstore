@@ -1,14 +1,11 @@
 package com.store.book.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,34 +23,9 @@ public class CustomGlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, fieldErrors);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolationException(
-            ConstraintViolationException ex) {
-        Map<String, String> fieldErrors = new HashMap<>();
-        ex.getConstraintViolations().forEach(v ->
-                fieldErrors.put(v.getPropertyPath().toString(), v.getMessage())
-        );
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, fieldErrors);
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST,
-                Map.of("error", "Invalid request format"));
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleEntityNotFound(EntityNotFoundException ex) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(
-            DataIntegrityViolationException ex) {
-        return buildErrorResponse(HttpStatus.CONFLICT,
-                Map.of("error",
-                        "Database integrity error: " + ex.getMostSpecificCause().getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -66,7 +38,6 @@ public class CustomGlobalExceptionHandler {
                                                                    Map<String, String> errors) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("status", status.value());
         body.put("errors", errors);
         return new ResponseEntity<>(body, status);
     }
