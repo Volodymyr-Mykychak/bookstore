@@ -6,8 +6,9 @@ import com.store.book.dto.CreateBookRequestDto;
 import java.util.List;
 
 public interface BookService {
-
     BookDto save(CreateBookRequestDto requestDto);
+
+    BookDto update(Long id, CreateBookRequestDto requestDto);
 
     List<BookDto> findAll();
 
