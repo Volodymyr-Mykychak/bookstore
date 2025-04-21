@@ -1,72 +1,64 @@
-## 📚 Book Search Feature
+# ✅ Homework: Add Pagination, Sorting, and Swagger to Book Controller
 
-### 📝 Overview
+This pull request enhances the `BookController` functionality by adding:
 
-This feature adds the ability to search for books in the catalog using various parameters. Users can perform a search to
-find books they may be interested in purchasing.
+## 🔁 Pagination Support
 
-### 🌐 API Endpoint
+- Implemented using Spring's `Pageable` and `Page<T>`
+- Example usage:
+  `GET /books?page=0&size=5`
+- Metadata returned includes:
+    - Total items
+    - Total pages
+    - Current page
+    - Items per page
+    - Is last page
 
-The search functionality is exposed via the following endpoint:
+## ↕️ Sorting Support
 
-```
-GET /api/books/search
-```
+- Implemented using Spring Data's multi-sort capability
+- Example usage:
+  `GET /books?sort=price,desc&sort=title,asc`
+- Supports chaining by multiple fields
 
-### 🔍 Example Usage
+## 📘 Swagger Integration
 
-Clients can send a GET request with search parameters to filter books accordingly.
+- All endpoints are now documented with Swagger UI
+- Swagger UI available at: `http://localhost:8080/swagger-ui/index.html`
 
-#### Sample Controller Implementation
+## 🔨 Technical Details
 
-```java
+- `BookController` now accepts `Pageable` as a parameter
+- `BookService` updated to return `Page<BookDto>`
+- `BookRepository` extends `JpaSpecificationExecutor<Book>`
+- Swagger enabled using `springdoc-openapi` library
 
-@GetMapping("/search")
-public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
-    // Implementation logic here
+## ✅ Example Request
+
+# GET /books?page=1&size=5&sort=price,desc&sort=title
+
+```json
+{
+  "content": [
+    ...
+  ],
+  "pageable": {
+    "pageNumber": 1,
+    "pageSize": 5
+  },
+  "totalPages": 10,
+  "totalElements": 50,
+  "last": false,
+  "first": false
 }
 ```
 
-### 📥 Request Parameters
+🚀 How to Test
+Run the application.
 
-The request should contain a set of search fields defined in `BookSearchParametersDto`. You can customize the request
-fields based on your needs.
+Open Swagger UI
 
-#### Example DTO Implementations
+Try the /books endpoint with different parameters.
 
-**🟢 Option 1: Detailed Search**
-
-```java
-public record BookSearchParametersDto(String title, String author, String isbn) {
-    // Additional search parameters can be added as required
-}
-```
-
-**🔵 Option 2: Simplified Search**
-
-```java
-public record BookSearchParameters(String titlePart, String author) {
-    // Searching over arrays (e.g., multiple authors) can be complex, so this keeps it simpler
-}
-```
-
-### 🚀 Steps to Implement
-
-1. ✍️ Create the `BookSearchParametersDto` class to define search parameters.
-2. 🔧 Implement the `searchBooks` method in the appropriate controller.
-3. 🗄️ Ensure the method retrieves books from the database based on provided parameters.
-4. ✅ Write unit tests to verify the search functionality.
-
-### 📤 Submitting Your Work
-
-- 🔀 Create a Pull Request (PR) to your course project repository with the implemented changes.
-- 🔗 Share the PR link as your homework solution.
-
-### 📌 Additional Notes
-
-If you need to open multiple PRs in parallel and are waiting for previous reviews, please refer to the course
-documentation on handling multiple PRs.
-
----
-💡 *For any questions, feel free to ask!*
-
+http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/api/swagger-ui/index.html
