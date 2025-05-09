@@ -3,8 +3,6 @@ package com.store.book.controller;
 import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.BookSearchParametersDto;
 import com.store.book.dto.book.CreateBookRequestDto;
-import com.store.book.security.Authentication;
-import com.store.book.security.SecurityContextHolder;
 import com.store.book.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -37,11 +35,7 @@ public class BookController {
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available books")
     public Page<BookDto> findAll(Pageable pageable) {
-        Authentication authentication = SecurityContextHolder
-                .getSecurityContext()
-                .getAuthentication();
-        String email = (String) authentication.getPrincipal();
-        return bookService.findAll(email, pageable);
+        return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")

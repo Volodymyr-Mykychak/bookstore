@@ -3,14 +3,12 @@ package com.store.book.service.impl;
 import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.BookSearchParametersDto;
 import com.store.book.dto.book.CreateBookRequestDto;
-import com.store.book.dto.user.UserResponseDto;
 import com.store.book.exception.EntityNotFoundException;
 import com.store.book.mapper.BookMapper;
 import com.store.book.model.Book;
 import com.store.book.repository.book.BookRepository;
 import com.store.book.repository.book.BookSpecificationBuilder;
 import com.store.book.service.BookService;
-import com.store.book.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +22,6 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
-    private final UserService userService;
 
     @Override
     public BookDto save(CreateBookRequestDto bookDto) {
@@ -45,9 +42,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Page<BookDto> findAll(String email, Pageable pageable) {
-        UserResponseDto userResponseDto = userService.getByEmail(email);
-        return bookRepository.findAllByUserId(userResponseDto.getId(), pageable)
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookRepository.findAll(pageable)
                 .map(bookMapper::toDto);
     }
 

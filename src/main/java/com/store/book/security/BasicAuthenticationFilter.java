@@ -1,6 +1,5 @@
 package com.store.book.security;
 
-import com.store.book.exception.BadCredentialsException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpFilter;
@@ -46,14 +45,14 @@ public class BasicAuthenticationFilter extends HttpFilter {
             return null;
         }
         if (header.equalsIgnoreCase(AUTHORIZATION_SCHEMA_BASIC)) {
-            throw new BadCredentialsException("Empty basic authentication token");
+            throw new RuntimeException("Empty basic authentication token");
         }
-        String token = header.substring(6); // Наприклад: "Ym9iQGV4YW1wbGUuY29tOjEyMzQ="
+        String token = header.substring(6);
         byte[] decodedToken = Base64.getDecoder().decode(token);
         String loginAndPassword = new String(decodedToken, StandardCharsets.UTF_8);
         int delim = loginAndPassword.indexOf(":");
         if (delim == -1) {
-            throw new BadCredentialsException("Invalid basic authentication token");
+            throw new RuntimeException("Invalid basic authentication token");
         }
         String login = loginAndPassword.substring(0, delim);
         String password = loginAndPassword.substring(delim + 1);

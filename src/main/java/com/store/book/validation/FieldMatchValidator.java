@@ -15,13 +15,14 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
     }
 
     public boolean isValid(Object value, ConstraintValidatorContext context) {
+        String firstObj;
+        String secondObj;
         try {
-            final String firstObj = BeanUtils.getProperty(value, firstFieldName);
-            final String secondObj = BeanUtils.getProperty(value, secondFieldName);
-            return Objects.equals(firstObj, secondObj);
-        } catch (Exception ignore) {
+            firstObj = BeanUtils.getProperty(value, firstFieldName);
+            secondObj = BeanUtils.getProperty(value, secondFieldName);
+        } catch (Exception e) {
             return false;
         }
+        return Objects.equals(firstObj, secondObj);
     }
 }
-
