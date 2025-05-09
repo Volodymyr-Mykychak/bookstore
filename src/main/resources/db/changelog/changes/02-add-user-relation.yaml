@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-user-relation-to-books
+      author: Volodymyr
+      changes:
+        - addColumn:
+            tableName: books
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: books
+            baseColumnNames: user_id
+            constraintName: fk_books_user
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: CASCADE
