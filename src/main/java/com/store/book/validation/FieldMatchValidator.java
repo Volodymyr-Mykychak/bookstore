@@ -2,6 +2,7 @@ package com.store.book.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import java.util.Objects;
 import org.apache.commons.beanutils.BeanUtils;
 
 public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Object> {
@@ -17,7 +18,7 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
         try {
             final String firstObj = BeanUtils.getProperty(value, firstFieldName);
             final String secondObj = BeanUtils.getProperty(value, secondFieldName);
-            return firstObj != null && firstObj.equals(secondObj);
+            return Objects.equals(firstObj, secondObj);
         } catch (Exception ignore) {
             return false;
         }

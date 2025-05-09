@@ -11,10 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long>,
         JpaSpecificationExecutor<Book> {
-    // старий метод (можна залишити, якщо потрібно)
     List<Book> findAllByUserId(Long userId);
 
-    // новий метод з підтримкою пагінації
     Page<Book> findAllByUserId(Long userId, Pageable pageable);
 }
 
