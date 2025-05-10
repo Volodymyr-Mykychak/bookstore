@@ -16,17 +16,24 @@ databaseChangeLog:
               - column:
                   name: title
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: author
                   type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: isbn
                   type: varchar(255)
                   constraints:
                     unique: true
+                    nullable: false
               - column:
                   name: price
                   type: decimal(19, 2)
+                  constraints:
+                    nullable: false
               - column:
                   name: description
                   type: varchar(255)

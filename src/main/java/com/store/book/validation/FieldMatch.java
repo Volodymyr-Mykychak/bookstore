@@ -23,4 +23,3 @@ public @interface FieldMatch {
 
     Class<? extends Payload>[] payload() default {};
 }
-
