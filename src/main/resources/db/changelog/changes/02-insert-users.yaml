@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: Volodymyr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: email, value: "alice.smith@example.net" }
+              - column: { name: password, value: "StrongPass789" }
+              - column: { name: first_name, value: "Alice" }
+              - column: { name: last_name, value: "Smith" }
+              - column: { name: shipping_address, value: "789 Oak Avenue, Metropolis" }
+              - column: { name: is_deleted, valueBoolean: false }
+
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: email, value: "jane.smith@gmail.com" }
+              - column: { name: password, value: "12345678" }
+              - column: { name: first_name, value: "Jane" }
+              - column: { name: last_name, value: "Smith" }
+              - column: { name: shipping_address, value: "456 Oak Ave, Town" }
+              - column: { name: is_deleted, valueBoolean: false }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 3 }
+              - column: { name: email, value: "alice.wonderland@gmail.com" }
+              - column: { name: password, value: "12345678" }
+              - column: { name: first_name, value: "Alice" }
+              - column: { name: last_name, value: "Wonderland" }
+              - column: { name: shipping_address, value: "789 Fantasy Rd, Dreamland" }
+              - column: { name: is_deleted, valueBoolean: false }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 4 }
+              - column: { name: email, value: "bob.builder@gmail.com" }
+              - column: { name: password, value: "12345678" }
+              - column: { name: first_name, value: "Bob" }
+              - column: { name: last_name, value: "Builder" }
+              - column: { name: shipping_address, value: "101 Construction Site" }
+              - column: { name: is_deleted, valueBoolean: false }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 5 }
+              - column: { name: email, value: "charlie.chaplin@gmail.com" }
+              - column: { name: password, value: "12345678" }
+              - column: { name: first_name, value: "Charlie" }
+              - column: { name: last_name, value: "Chaplin" }
+              - column: { name: shipping_address, value: "202 Silent Film Blvd" }
+              - column: { name: is_deleted, valueBoolean: false }

@@ -1,6 +1,6 @@
 package com.store.book.repository.book;
 
-import com.store.book.dto.BookSearchParametersDto;
+import com.store.book.dto.book.BookSearchParametersDto;
 import com.store.book.model.Book;
 import com.store.book.repository.SpecificationBuilder;
 import com.store.book.repository.SpecificationProviderManager;
@@ -22,7 +22,6 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
                 BookSpecificationField.AUTHOR, getValues(searchParametersDto.author()),
                 BookSpecificationField.ISBN, getValues(searchParametersDto.isbn())
         );
-
         for (var entry : filters.entrySet()) {
             if (entry.getValue().length > 0) {
                 spec = spec.and(bookSpecificationProviderManager
