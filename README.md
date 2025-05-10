@@ -1,7 +1,11 @@
+[swagger-ui](http://localhost:8080/api/swagger-ui/index.html)
+
 # 🛡️ User Registration – Spring Security (Part 1)
 
-This project implements **user registration** as part of the first phase of introducing security to an online bookstore web application.  
-The goal is to create the basic infrastructure to handle user registration, including DTOs, mapping, validation, and exception handling.
+This project implements **user registration** as part of the first phase of introducing security to an online bookstore
+web application.  
+The goal is to create the basic infrastructure to handle user registration, including DTOs, mapping, validation, and
+exception handling.
 
 ---
 
@@ -17,14 +21,14 @@ The goal is to create the basic infrastructure to handle user registration, incl
 
 ## 🧩 Tech Stack
 
-- Java 17 ☕  
-- Spring Boot 🌱  
-- Spring Validation ✅  
-- Lombok 🦾  
-- MapStruct 🔁  
-- JPA + Hibernate 🗃️  
-- MySQL 🐬  
-- Maven ⚙️  
+- Java 17 ☕
+- Spring Boot 🌱
+- Spring Validation ✅
+- Lombok 🦾
+- MapStruct 🔁
+- JPA + Hibernate 🗃️
+- MySQL 🐬
+- Maven ⚙️
 
 ---
 
@@ -64,6 +68,7 @@ The goal is to create the basic infrastructure to handle user registration, incl
 ### 🔹 POST /auth/registration
 
 📥 **Request body**:
+
 ```json
 {
   "email": "john.doe@example.com",
@@ -76,6 +81,7 @@ The goal is to create the basic infrastructure to handle user registration, incl
 ```
 
 📤 **Response body**:
+
 ```json
 {
   "id": 1,
@@ -87,6 +93,7 @@ The goal is to create the basic infrastructure to handle user registration, incl
 ```
 
 📛 **Possible errors**:
+
 - 🔁 `400 Bad Request` – validation failed (`@Email`, `@FieldMatch`, `@NotBlank`)
 - 📧 `409 Conflict` – user with the same email already exists
 
@@ -101,3 +108,5 @@ The goal is to create the basic infrastructure to handle user registration, incl
 ---
 
 ## 🤝 Assignment for [Mate Academy](https://mate.academy/)
+
+
