@@ -1,4 +1,4 @@
-package com.store.book.dto;
+package com.store.book.dto.book;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.DecimalMin;
