@@ -25,21 +25,14 @@ public class AuthController {
             summary = "Register a new user",
             description = "Creates an account using email and password",
             responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully registered"
-                    ),
-                    @ApiResponse(
-                            responseCode = "400",
-                            description = "Invalid data or already "
-                                    + "registered"
-                    )
+                    @ApiResponse(responseCode = "200", description = "Successfully registered"),
+                    @ApiResponse(responseCode = "400", description =
+                            "Invalid data or already " + "registered")
             }
     )
     @PostMapping("/registration")
-    public UserResponseDto registerUser(
-            @RequestBody @Valid UserRegistrationRequestDto requestDto
-    ) throws RegistrationException {
+    public UserResponseDto registerUser(@RequestBody @Valid UserRegistrationRequestDto requestDto)
+            throws RegistrationException {
         return userService.register(requestDto);
     }
 }

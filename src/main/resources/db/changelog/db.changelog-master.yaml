@@ -4,4 +4,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/01-create-books-table.yaml
   - include:
-      file: db/changelog/changes/02-insert-users.yaml
+      file: db/changelog/changes/02-add-role-table.yml
+  - include:
+      file: db/changelog/changes/03-add-roles-admin-user.yaml

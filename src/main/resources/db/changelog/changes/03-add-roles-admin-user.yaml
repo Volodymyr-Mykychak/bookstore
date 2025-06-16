@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-roles
+      author: you
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: USER
+              - column:
+                  name: name
+                  value: ADMIN
+
+  - changeSet:
+      id: insert-admin-user
+      author: you
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$wfB05ha61EtV4FYa16kuaewPld0Qw7isWneDv321273uPcagQADyC"  # 12345678
+              - column:
+                  name: first_name
+                  value: Admin
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: is_deleted
+                  value: 0
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'admin@example.com')"
+              - column:
+                  name: role_id
+                  valueComputed: "(SELECT id FROM roles WHERE name = 'ADMIN')"
