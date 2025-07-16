@@ -36,21 +36,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                                .requestMatchers(
                                                        HttpMethod.POST,
-                                                       "/auth/registration",
-                                                       "/auth/login"
+                                                       "/auth/**"
                                                                ).permitAll()
                                                .requestMatchers(
                                                        "/swagger-ui/**",
                                                        "/v3/api-docs/**",
                                                        "/error"
                                                                ).permitAll()
-                                               .requestMatchers(HttpMethod.GET, "/books/**")
+                                               .requestMatchers(HttpMethod.GET, "/api/books/**")
                                                .hasAnyRole("USER", "ADMIN")
-                                               .requestMatchers(HttpMethod.POST, "/books")
+                                               .requestMatchers(HttpMethod.POST, "/api/books")
                                                .hasRole("ADMIN")
-                                               .requestMatchers(HttpMethod.PUT, "/books/**")
+                                               .requestMatchers(HttpMethod.PUT, "/api/books/**")
                                                .hasRole("ADMIN")
-                                               .requestMatchers(HttpMethod.DELETE, "/books/**")
+                                               .requestMatchers(HttpMethod.DELETE, "/api/books/**")
                                                .hasRole("ADMIN")
                                                .anyRequest().authenticated()
                                       )
