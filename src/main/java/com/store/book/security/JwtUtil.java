@@ -55,4 +55,3 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 }
-
