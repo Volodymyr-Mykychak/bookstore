@@ -78,4 +78,3 @@ public class BookController {
         return bookService.search(searchParams);
     }
 }
-
