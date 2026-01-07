@@ -31,7 +31,6 @@ public class AuthController {
             summary = "Register a new user",
             description = "Creates an account using email and password",
             responses = {
-                    // Змініть 200 на 201 тут:
                     @ApiResponse(responseCode = "201", description = "Successfully registered"),
                     @ApiResponse(responseCode = "400", description = "Invalid data or already "
                                                                      + "registered")

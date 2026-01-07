@@ -27,7 +27,6 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public BookDto save(CreateBookRequestDto requestDto) {
-        // setCategories спрацює автоматично всередині toModel
         Book book = bookMapper.toModel(requestDto);
         return bookMapper.toDto(bookRepository.save(book));
     }

@@ -36,9 +36,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         Role defaultRole = roleRepository.findByName(RoleName.USER)
                                          .orElseThrow(() -> new IllegalStateException(
-                                                 "Default role USER was not found in DB"));
+                                                 "Default role " + RoleName.USER.name() + " was "
+                                                 + "not found in DB"));
         user.setRoles(Set.of(defaultRole));
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 }

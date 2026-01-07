@@ -57,12 +57,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteById(Long id) {
-        if (!categoryRepository.existsById(id)) { // Варто додати таку ж логіку як у книгах
+        if (!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Category not found with id " + id);
         }
         categoryRepository.deleteById(id);
     }
-    
+
     @Override
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id) {
         if (!categoryRepository.existsById(id)) {
