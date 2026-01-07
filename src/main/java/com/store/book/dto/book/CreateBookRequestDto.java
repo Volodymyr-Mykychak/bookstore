@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -26,5 +27,7 @@ public class CreateBookRequestDto {
     @Size(max = 500, message = "Book description must not exceed 500 characters")
     private String description;
     private String coverImage;
+    @NotNull(message = "Book must have at least one category")
+    @Size(min = 1, message = "Book must belong to at least one category")
+    private List<Long> categoryIds;
 }
-

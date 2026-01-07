@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Books", description = "Endpoints for managing books")
@@ -34,6 +36,7 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new book", description = "Adds a new book to the catalog")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
     }
@@ -49,16 +52,17 @@ public class BookController {
         return bookService.update(id, requestDto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete book by ID", description = "Removes a book from the catalog")
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Operation(summary = "Get paginated list of books", description =
-            "Retrieves books page by " + "page")
+    @Operation(summary = "Get paginated list of books", description = "Retrieves books page by "
+                                                                      + "page")
     @GetMapping
     public Page<BookDto> getAllBooks(@Parameter(hidden = true) Pageable pageable) {
         return bookService.findAll(pageable);
