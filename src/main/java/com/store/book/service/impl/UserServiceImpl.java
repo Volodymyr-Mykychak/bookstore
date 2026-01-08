@@ -14,6 +14,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,16 +25,20 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional
     public UserResponseDto register(
-            UserRegistrationRequestDto requestDto) throws RegistrationException {
+            UserRegistrationRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new RegistrationException("User already exists with email");
+            throw new RegistrationException("Can't register user. Email "
+                                            + requestDto.getEmail() + " is already taken");
         }
         User user = userMapper.toUser(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        Role role = roleRepository.findByName(RoleName.USER).orElseThrow(
-                () -> new IllegalStateException("Role USER not found"));
-        user.setRoles(Set.of(role));
+        Role defaultRole = roleRepository.findByName(RoleName.USER)
+                                         .orElseThrow(() -> new IllegalStateException(
+                                                 "Default role " + RoleName.USER.name() + " was "
+                                                 + "not found in DB"));
+        user.setRoles(Set.of(defaultRole));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }

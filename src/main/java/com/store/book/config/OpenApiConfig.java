@@ -12,19 +12,20 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenApi() {
-        final String securitySchemeName = "basicAuth";
+        final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
                               .title("Bookstore API")
                               .version("1.0")
-                              .description("API for managing users and books"))
+                              .description("API for managing users, books and categories"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components().addSecuritySchemes(
                         securitySchemeName,
                         new SecurityScheme()
                                 .name(securitySchemeName)
                                 .type(SecurityScheme.Type.HTTP)
-                                .scheme("basic")
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
                                                                ));
     }
 }

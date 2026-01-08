@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/changes/02-add-role-table.yml
   - include:
       file: db/changelog/changes/03-add-roles-admin-user.yaml
+  - include:
+      file: db/changelog/changes/04-create-categories-table.yaml
+  - include:
+      file: db/changelog/changes/05-create-book-category-table.yaml
