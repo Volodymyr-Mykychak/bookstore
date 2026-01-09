@@ -9,6 +9,7 @@ import com.store.book.model.RoleName;
 import com.store.book.model.User;
 import com.store.book.repository.RoleRepository;
 import com.store.book.repository.UserRepository;
+import com.store.book.service.ShoppingCartService;
 import com.store.book.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,11 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     @Transactional
-    public UserResponseDto register(
-            UserRegistrationRequestDto requestDto) {
+    public UserResponseDto register(UserRegistrationRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new RegistrationException("Can't register user. Email "
                                             + requestDto.getEmail() + " is already taken");
@@ -36,10 +37,11 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         Role defaultRole = roleRepository.findByName(RoleName.USER)
                                          .orElseThrow(() -> new IllegalStateException(
-                                                 "Default role " + RoleName.USER.name() + " was "
-                                                 + "not found in DB"));
+                                                 "Default role " + RoleName.USER.name()
+                                                 + " was not found in DB"));
         user.setRoles(Set.of(defaultRole));
-        userRepository.save(user);
-        return userMapper.toUserResponse(user);
+        User savedUser = userRepository.save(user);
+        shoppingCartService.createShoppingCartForUser(savedUser);
+        return userMapper.toUserResponse(savedUser);
     }
 }
