@@ -35,13 +35,13 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.toUser(requestDto);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        Role defaultRole = roleRepository.findByName(RoleName.USER)
+        Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
                                          .orElseThrow(() -> new IllegalStateException(
-                                                 "Default role " + RoleName.USER.name()
+                                                 "Default role " + RoleName.ROLE_USER.name()
                                                  + " was not found in DB"));
         user.setRoles(Set.of(defaultRole));
-        User savedUser = userRepository.save(user);
-        shoppingCartService.createShoppingCartForUser(savedUser);
-        return userMapper.toUserResponse(savedUser);
+        userRepository.save(user);
+        shoppingCartService.createShoppingCartForUser(user);
+        return userMapper.toUserResponse(user);
     }
 }
