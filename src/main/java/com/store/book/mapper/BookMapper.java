@@ -13,6 +13,7 @@ import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(config = MapperConfig.class)
@@ -54,5 +55,15 @@ public interface BookMapper {
                                                  .collect(Collectors.toSet());
             book.setCategories(categories);
         }
+    }
+
+    @Named("bookFromId")
+    default Book bookFromId(Long id) {
+        if (id == null) {
+            return null;
+        }
+        Book book = new Book();
+        book.setId(id);
+        return book;
     }
 }

@@ -1,148 +1,200 @@
-# 🧩 Add Category Model
+# 🛒 Shopping Cart Feature — Spring Boot Practice
 
-Enhance your Spring Boot application by adding support for a new entity — **Category**.  
-This task includes both user and admin functionality, model implementation, and architectural improvements.
+## 📌 Overview
 
----
+This task is part of a Spring Boot practice project.
+The goal is to implement **Shopping Cart functionality**, allowing users to add books, manage quantities, and view their
+cart before placing an order.
 
-## 👤 User Use Cases (Role: USER)
-
-Users should be able to browse categories and find books by category.
-
-- `GET /api/categories` — 🔍 Retrieve all categories
-- `GET /api/categories/{id}/books` — 📚 Get books by a specific category
+After completing this task, your application will support **full shopping cart management** for users with the `USER`
+role.
 
 ---
 
-## 👨‍💼 Admin Use Cases (Role: ADMIN)
+## 🎯 User Use Cases (ROLE: USER)
 
-Admins should be able to manage categories.
+### 🧺 Shopping Cart Management
 
-- `POST /api/categories` — ➕ Create a new category
-- `PUT /api/categories/{id}` — 🔄 Update category details
-- `DELETE /api/categories/{id}` — ❌ Remove category
+* **Add a book to the shopping cart**
+
+    * `POST /api/cart`
+
+* **View shopping cart contents**
+
+    * `GET /api/cart`
+
+* **Update quantity of a book in the cart**
+
+    * `PUT /api/cart/items/{cartItemId}`
+
+* **Remove a book from the cart**
+
+    * `DELETE /api/cart/items/{cartItemId}`
 
 ---
 
-## 🧬 Domain Models
+## 🧱 Domain Models (Entities)
 
-After completing this task, your project should include the following entities:
+After completing this task, the following entities must exist in the project:
 
-- `Book` 📘
-- `User` 👤
-- `Role` 🛡️
-- `Category` 🗂️
+* 📘 **Book**
+* 👤 **User**
+* 🧑‍💼 **Role**
+* 🗂 **Category**
+* 🛒 **ShoppingCart**
+* 📦 **CartItem**
 
-### 🔧 Category Entity
+---
+
+## 🛒 ShoppingCart Entity
+
+Represents a user's shopping cart.
+
+**Fields:**
+
+* `id` — `Long` (Primary Key)
+* `user` — `User` (**not null**)
+* `cartItems` — `Set<CartItem>`
+
+📌 *You may use soft delete for shopping carts.*
+
+---
+
+## 📦 CartItem Entity
+
+Represents a single item in a shopping cart.
+
+**Fields:**
+
+* `id` — `Long` (Primary Key)
+* `shoppingCart` — `ShoppingCart` (**not null**)
+* `book` — `Book` (**not null**)
+* `quantity` — `int` (**not null**)
+
+📌 *Cart items should be removed permanently (no soft delete needed).*
+
+---
+
+## 🔁 Mapper Hint
+
+It may be helpful to add the following method to `BookMapper`:
 
 ```java
-Long id;
-String name;         // required
-String description;
-````
 
-In `Book` class:
-
-```java
-private Set<Category> categories = new HashSet<>();
-```
-
-You can use:
-
-```java
-List<Book> findAllByCategoryId(Long categoryId);
-```
-
----
-
-## 🗂️ Repositories & Mappers
-
-* Create `CategoryRepository` extending `JpaRepository`
-
-* Add DTOs for `Category`
-
-* Modify `BookMapper`:
-
-    * `BookDto toDto(Book book);`
-    * `Book toEntity(CreateBookRequestDto dto);`
-    * `BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);`
-    * `@AfterMapping setCategoryIds(...)`
-
-* Create `CategoryMapper`:
-
-    * `CategoryDto toDto(Category category);`
-    * `Category toEntity(CategoryDto dto);`
-
----
-
-## 🧠 Services
-
-Create:
-
-* `CategoryService` interface:
-
-    * `List<CategoryDto> findAll();`
-    * `CategoryDto getById(Long id);`
-    * `CategoryDto save(CategoryDto dto);`
-    * `CategoryDto update(Long id, CategoryDto dto);`
-    * `void deleteById(Long id);`
-
-* `CategoryServiceImpl` implementation
-
----
-
-## 🌐 Controllers
-
-Create `CategoryController`:
-
-```java
-public CategoryDto createCategory(CategoryDto dto)
-
-public List<CategoryDto> getAll()
-
-public CategoryDto getCategoryById(Long id)
-
-public CategoryDto updateCategory(Long id, CategoryDto dto)
-
-public void deleteCategory(Long id)
-
-public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(Long id)
+@Named("bookFromId")
+default Book bookFromId(Long id) {
+    // implementation
+}
 ```
 
 ---
 
 ## ⚙️ General Requirements
 
-* ✅ Use **Liquibase**
-* ✅ Implement **soft delete**
-* ✅ Avoid using `FetchType.EAGER`
-* ✅ Add **pagination**, **sorting**, **Swagger**
-* ✅ Add **validation** to input DTOs
-* ✅ Map `List<Long> categoryIds` → `Set<Category>` in `Book`
-* ✅ Exclude `categories` from `toString()`, `equals()`, `hashCode()`:
+✅ Use **Liquibase** for database migrations
+✅ Do **NOT** use `FetchType.EAGER`
+✅ Add **Pagination & Sorting** to all controllers
+✅ Add **Swagger/OpenAPI** documentation
+✅ Add **validation** to all input DTOs
 
-```java
+---
 
-@ManyToMany(fetch = FetchType.LAZY)
-@JoinTable(...)
-@ToString.Exclude
-@EqualsAndHashCode.Exclude
-private Set<Category> categories = new HashSet<>();
+## ❗ Important Notes
+
+* There must be **exactly one shopping cart per user**
+* The shopping cart must be created during **user registration**
+* Shopping carts are **never deleted**
+
+---
+
+## 🔗 API Endpoints
+
+### 🛒 Shopping Cart Endpoints
+
+#### 📥 Get Shopping Cart
+
+`GET /api/cart`
+
+**Response example:**
+
+```json
+{
+  "id": 123,
+  "userId": 456,
+  "cartItems": [
+    {
+      "id": 1,
+      "bookId": 789,
+      "bookTitle": "Sample Book 1",
+      "quantity": 2
+    },
+    {
+      "id": 2,
+      "bookId": 790,
+      "bookTitle": "Sample Book 2",
+      "quantity": 1
+    }
+  ]
+}
 ```
 
 ---
 
-## 🔗 Endpoints
+#### ➕ Add Book to Cart
 
-### 🧑 USER
+`POST /api/cart`
+
+**Request example:**
+
+```json
+{
+  "bookId": 2,
+  "quantity": 5
+}
+```
+
+---
+
+#### ✏️ Update Book Quantity
+
+`PUT /api/cart/items/{cartItemId}`
+
+**Request example:**
+
+```json
+{
+  "quantity": 10
+}
+```
+
+---
+
+#### ❌ Remove Book from Cart
+
+`DELETE /api/cart/items/{cartItemId}`
+
+---
+
+## 🔐 Security Requirements
+
+### 🌍 Public (No Authentication)
+
+* `POST /api/auth/register`
+* `POST /api/auth/login`
+
+### 👤 USER Role
 
 * `GET /api/books`
 * `GET /api/books/{id}`
 * `GET /api/categories`
 * `GET /api/categories/{id}`
 * `GET /api/categories/{id}/books`
+* `GET /api/cart`
+* `POST /api/cart`
+* `PUT /api/cart/items/{cartItemId}`
+* `DELETE /api/cart/items/{cartItemId}`
 
-### 🛡️ ADMIN
+### 🧑‍💼 ADMIN Role
 
 * `POST /api/books`
 * `PUT /api/books/{id}`
@@ -151,50 +203,20 @@ private Set<Category> categories = new HashSet<>();
 * `PUT /api/categories/{id}`
 * `DELETE /api/categories/{id}`
 
-### 🔐 Public
-
-* `POST /api/auth/register`
-* `POST /api/auth/login`
-
 ---
 
-## 🧪 Examples
+## 🧠 Debugging Hint
 
-### ➕ Create Category
+If `bookRepository.findById(id)` returns `Optional.empty()` **even though the book exists in DB**:
 
-**POST /api/categories**
+👉 Check whether the book has a category
+👉 Think about the difference between:
 
-```json
-{
-  "name": "Fiction",
-  "description": "Fiction books"
-}
-```
+* `JOIN FETCH`
+* `LEFT JOIN FETCH`
 
-### 📋 Get All Categories
+This often causes unexpected behavior when relationships are not loaded correctly.
 
-**GET /api/categories**
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fiction",
-    "description": "Fiction books"
-  }
-]
-```
-
-### 🔄 Update Category
-
-**PUT /api/categories/{id}**
-
-```json
-{
-  "name": "Fiction",
-  "description": "Fiction books"
-}
-```
 
 
 
