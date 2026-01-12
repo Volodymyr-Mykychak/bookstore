@@ -3,7 +3,7 @@ package com.store.book.controller;
 import com.store.book.dto.cart.CartItemRequestDto;
 import com.store.book.dto.cart.CartItemUpdateDto;
 import com.store.book.dto.cart.ShoppingCartDto;
-import com.store.book.security.UserSecurityDetails;
+import com.store.book.model.User;
 import com.store.book.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,8 +35,8 @@ public class ShoppingCartController {
 
     @Operation(summary = "Get current user's shopping cart")
     @GetMapping
-    public ShoppingCartDto getInfo(@AuthenticationPrincipal UserSecurityDetails userDetails) {
-        return shoppingCartService.findByUserId(userDetails.getId());
+    public ShoppingCartDto getInfo(Authentication authentication) {
+        return shoppingCartService.findByUserId(getUserId(authentication));
     }
 
     @Operation(
@@ -48,9 +48,9 @@ public class ShoppingCartController {
     @ResponseStatus(HttpStatus.CREATED)
     public ShoppingCartDto addBook(
             @Valid @RequestBody CartItemRequestDto requestDto,
-            @AuthenticationPrincipal UserSecurityDetails userDetails) {
+            Authentication authentication) {
         return shoppingCartService.addBookToCart(
-                userDetails.getId(),
+                getUserId(authentication),
                 requestDto
                                                 );
     }
@@ -60,9 +60,9 @@ public class ShoppingCartController {
     public ShoppingCartDto updateQuantity(
             @PathVariable Long cartItemId,
             @Valid @RequestBody CartItemUpdateDto updateDto,
-            @AuthenticationPrincipal UserSecurityDetails userDetails) {
+            Authentication authentication) {
         return shoppingCartService.updateCartItem(
-                userDetails.getId(),
+                getUserId(authentication),
                 cartItemId,
                 updateDto
                                                  );
@@ -73,7 +73,15 @@ public class ShoppingCartController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(
             @PathVariable Long cartItemId,
-            @AuthenticationPrincipal UserSecurityDetails userDetails) {
-        shoppingCartService.removeCartItem(userDetails.getId(), cartItemId);
+            Authentication authentication) {
+        shoppingCartService.removeCartItem(getUserId(authentication), cartItemId);
+    }
+
+    private Long getUserId(Authentication authentication) {
+        if (authentication == null) {
+            throw new RuntimeException("User is not authenticated");
+        }
+        User user = (User) authentication.getPrincipal();
+        return user.getId();
     }
 }

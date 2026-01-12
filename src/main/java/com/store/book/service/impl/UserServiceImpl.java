@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
                                                  "Default role " + RoleName.ROLE_USER.name()
                                                  + " was not found in DB"));
         user.setRoles(Set.of(defaultRole));
-        userRepository.save(user);
-        shoppingCartService.createShoppingCartForUser(user);
-        return userMapper.toUserResponse(user);
+        User savedUser = userRepository.save(user);
+        shoppingCartService.createShoppingCartForUser(savedUser);
+        return userMapper.toUserResponse(savedUser);
     }
 }
