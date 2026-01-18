@@ -1,222 +1,95 @@
-# 🛒 Shopping Cart Feature — Spring Boot Practice
+# 📚 Online Book Store API: Order Management System
 
-## 📌 Overview
+Welcome to the **Order Management** module of the Online Book Store API. This update introduces full checkout
+functionality, order history tracking, and administrative order status management.
 
-This task is part of a Spring Boot practice project.
-The goal is to implement **Shopping Cart functionality**, allowing users to add books, manage quantities, and view their
-cart before placing an order.
+## 🚀 Key Features
 
-After completing this task, your application will support **full shopping cart management** for users with the `USER`
-role.
-
----
-
-## 🎯 User Use Cases (ROLE: USER)
-
-### 🧺 Shopping Cart Management
-
-* **Add a book to the shopping cart**
-
-    * `POST /api/cart`
-
-* **View shopping cart contents**
-
-    * `GET /api/cart`
-
-* **Update quantity of a book in the cart**
-
-    * `PUT /api/cart/items/{cartItemId}`
-
-* **Remove a book from the cart**
-
-    * `DELETE /api/cart/items/{cartItemId}`
+* 🛒 **Checkout Process**: Convert shopping cart items into a finalized order.
+* 📜 **Order History**: Users can view their past purchases and specific item details.
+* 🛡️ **Admin Controls**: Administrators can manage the order lifecycle (Pending, Shipped, Delivered, etc.).
+* 📊 **Deduplicated Data**: Prices are snapshotted at the moment of purchase within `OrderItem`.
 
 ---
 
-## 🧱 Domain Models (Entities)
+## 🏗️ Domain Models
 
-After completing this task, the following entities must exist in the project:
+### 📦 Order Entity
 
-* 📘 **Book**
-* 👤 **User**
-* 🧑‍💼 **Role**
-* 🗂 **Category**
-* 🛒 **ShoppingCart**
-* 📦 **CartItem**
+Represents a completed purchase by a user.
 
----
+* **Fields**: `id`, `user`, `status`, `total`, `orderDate`, `shippingAddress`, `orderItems`.
 
-## 🛒 ShoppingCart Entity
+### 📑 OrderItem Entity
 
-Represents a user's shopping cart.
+Represents a specific book within an order.
 
-**Fields:**
-
-* `id` — `Long` (Primary Key)
-* `user` — `User` (**not null**)
-* `cartItems` — `Set<CartItem>`
-
-📌 *You may use soft delete for shopping carts.*
+* **Fields**: `id`, `order`, `book`, `quantity`, `price`.
 
 ---
 
-## 📦 CartItem Entity
+## 🛠️ API Endpoints
 
-Represents a single item in a shopping cart.
+### 👤 User Operations (`ROLE_USER`)
 
-**Fields:**
+| Method   | Endpoint                               | Description                                       |
+|----------|----------------------------------------|---------------------------------------------------|
+| **POST** | `/api/orders`                          | Place a new order from the current shopping cart. |
+| **GET**  | `/api/orders`                          | Retrieve the authenticated user's order history.  |
+| **GET**  | `/api/orders/{orderId}/items`          | View all items within a specific order.           |
+| **GET**  | `/api/orders/{orderId}/items/{itemId}` | View details of a specific item in an order.      |
 
-* `id` — `Long` (Primary Key)
-* `shoppingCart` — `ShoppingCart` (**not null**)
-* `book` — `Book` (**not null**)
-* `quantity` — `int` (**not null**)
+### 🔑 Admin Operations (`ROLE_ADMIN`)
 
-📌 *Cart items should be removed permanently (no soft delete needed).*
-
----
-
-## 🔁 Mapper Hint
-
-It may be helpful to add the following method to `BookMapper`:
-
-```java
-
-@Named("bookFromId")
-default Book bookFromId(Long id) {
-    // implementation
-}
-```
+| Method    | Endpoint           | Description                                                  |
+|-----------|--------------------|--------------------------------------------------------------|
+| **PATCH** | `/api/orders/{id}` | Update the status of any order (e.g., COMPLETED, DELIVERED). |
 
 ---
 
-## ⚙️ General Requirements
+## 📝 Request Examples
 
-✅ Use **Liquibase** for database migrations
-✅ Do **NOT** use `FetchType.EAGER`
-✅ Add **Pagination & Sorting** to all controllers
-✅ Add **Swagger/OpenAPI** documentation
-✅ Add **validation** to all input DTOs
+### Place an Order
 
----
-
-## ❗ Important Notes
-
-* There must be **exactly one shopping cart per user**
-* The shopping cart must be created during **user registration**
-* Shopping carts are **never deleted**
-
----
-
-## 🔗 API Endpoints
-
-### 🛒 Shopping Cart Endpoints
-
-#### 📥 Get Shopping Cart
-
-`GET /api/cart`
-
-**Response example:**
+**POST** `/api/orders`
 
 ```json
 {
-  "id": 123,
-  "userId": 456,
-  "cartItems": [
-    {
-      "id": 1,
-      "bookId": 789,
-      "bookTitle": "Sample Book 1",
-      "quantity": 2
-    },
-    {
-      "id": 2,
-      "bookId": 790,
-      "bookTitle": "Sample Book 2",
-      "quantity": 1
-    }
-  ]
+  "shippingAddress": "123 Spring Street, Java City, 01001"
 }
+
 ```
 
----
+### Update Order Status (Admin)
 
-#### ➕ Add Book to Cart
-
-`POST /api/cart`
-
-**Request example:**
+**PATCH** `/api/orders/{id}`
 
 ```json
 {
-  "bookId": 2,
-  "quantity": 5
+  "status": "DELIVERED"
 }
+
 ```
 
 ---
 
-#### ✏️ Update Book Quantity
+## ⚙️ Technical Requirements & Features
 
-`PUT /api/cart/items/{cartItemId}`
-
-**Request example:**
-
-```json
-{
-  "quantity": 10
-}
-```
+* ✅ **Liquibase**: Database migrations for `orders` and `order_items` tables.
+* 🗑️ **Soft Delete**: All entities use a `is_deleted` flag instead of hard deletion.
+* ⚡ **Lazy Loading**: `FetchType.LAZY` used on all relational mappings to optimize performance.
+* 📖 **Pagination & Sorting**: Implemented for all collection endpoints.
+* 🔍 **Swagger UI**: Full API documentation and testing interface.
+* 🛡️ **Validation**: Robust DTO validation using `jakarta.validation`.
 
 ---
 
-#### ❌ Remove Book from Cart
+## 🔐 Security Matrix
 
-`DELETE /api/cart/items/{cartItemId}`
-
----
-
-## 🔐 Security Requirements
-
-### 🌍 Public (No Authentication)
-
-* `POST /api/auth/register`
-* `POST /api/auth/login`
-
-### 👤 USER Role
-
-* `GET /api/books`
-* `GET /api/books/{id}`
-* `GET /api/categories`
-* `GET /api/categories/{id}`
-* `GET /api/categories/{id}/books`
-* `GET /api/cart`
-* `POST /api/cart`
-* `PUT /api/cart/items/{cartItemId}`
-* `DELETE /api/cart/items/{cartItemId}`
-
-### 🧑‍💼 ADMIN Role
-
-* `POST /api/books`
-* `PUT /api/books/{id}`
-* `DELETE /api/books/{id}`
-* `POST /api/categories`
-* `PUT /api/categories/{id}`
-* `DELETE /api/categories/{id}`
+| Role       | Access Level                                                     |
+|------------|------------------------------------------------------------------|
+| **Public** | Auth (Login/Register)                                            |
+| **USER**   | Browse Books, Categories, Manage Own Cart, Place/View Own Orders |
+| **ADMIN**  | Full Book/Category CRUD, Update Any Order Status                 |
 
 ---
-
-## 🧠 Debugging Hint
-
-If `bookRepository.findById(id)` returns `Optional.empty()` **even though the book exists in DB**:
-
-👉 Check whether the book has a category
-👉 Think about the difference between:
-
-* `JOIN FETCH`
-* `LEFT JOIN FETCH`
-
-This often causes unexpected behavior when relationships are not loaded correctly.
-
-
-
-
