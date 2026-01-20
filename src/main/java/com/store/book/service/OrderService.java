@@ -4,16 +4,15 @@ import com.store.book.dto.order.CreateOrderRequestDto;
 import com.store.book.dto.order.OrderDto;
 import com.store.book.dto.order.OrderItemDto;
 import com.store.book.dto.order.UpdateOrderStatusDto;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
     Page<OrderDto> getAll(Long userId, Pageable pageable);
 
-    OrderDto create(Long userId, @Valid CreateOrderRequestDto address);
+    OrderDto create(Long userId, CreateOrderRequestDto address);
 
-    OrderDto updateStatus(Long orderId, @Valid UpdateOrderStatusDto status);
+    OrderDto updateStatus(Long orderId, UpdateOrderStatusDto status);
 
     Page<OrderItemDto> getAllItems(Long userId, Long orderId, Pageable pageable);
 

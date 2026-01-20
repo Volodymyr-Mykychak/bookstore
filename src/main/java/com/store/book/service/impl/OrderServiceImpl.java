@@ -15,7 +15,7 @@ import com.store.book.repository.UserRepository;
 import com.store.book.repository.cart.ShoppingCartRepository;
 import com.store.book.repository.order.OrderItemRepository;
 import com.store.book.repository.order.OrderRepository;
-import com.store.book.service.BookQuantityService;
+import com.store.book.service.BookService;
 import com.store.book.service.OrderService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderItemRepository orderItemRepository;
-    private final BookQuantityService bookQuantityService;
+    private final BookService bookService;
 
     @Override
     public Page<OrderDto> getAll(Long userId, Pageable pageable) {
@@ -56,8 +56,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Order.Status.PENDING);
         order.setOrderDate(LocalDateTime.now());
         Set<OrderItem> orderItems = shoppingCart.getCartItems().stream().map(cartItem -> {
-            bookQuantityService.secureStockUpdate(cartItem.getBook().getId(),
-                    -cartItem.getQuantity());
+            bookService.updateStock(cartItem.getBook().getId(), -cartItem.getQuantity());
             OrderItem orderItem = orderItemMapper.fromCartToOrderItem(cartItem);
             orderItem.setOrder(order);
             return orderItem;
@@ -80,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         if (updateDto.getStatus() == Order.Status.CANCELLED
                 && order.getStatus() != Order.Status.CANCELLED) {
             for (OrderItem item : order.getOrderItems()) {
-                bookQuantityService.secureStockUpdate(item.getBook().getId(), item.getQuantity());
+                bookService.updateStock(item.getBook().getId(), item.getQuantity());
             }
         }
         order.setStatus(updateDto.getStatus());

@@ -40,7 +40,6 @@ public class BookController {
         return bookService.save(requestDto);
     }
 
-    @SuppressWarnings("checkstyle:Indentation")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update book by ID", description = "Updates book details" + " by given ID",
             responses = {@ApiResponse(responseCode = "200",

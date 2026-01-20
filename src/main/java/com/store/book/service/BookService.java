@@ -18,4 +18,6 @@ public interface BookService {
     void deleteById(Long id);
 
     Page<BookDto> search(BookSearchParametersDto params, Pageable pageable);
+
+    void updateStock(Long bookId, int quantityChange);
 }

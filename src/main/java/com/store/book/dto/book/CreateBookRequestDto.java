@@ -30,8 +30,8 @@ public class CreateBookRequestDto {
     private String description;
     private String coverImage;
     @NotNull(message = "Quantity must not be null")
-    @PositiveOrZero(message = "Quantity must be 0 or greater")
-    private int quantity;
+    @PositiveOrZero(message = "Quantity must be zero or greater")
+    private Integer quantity;
     @NotEmpty(message = "Book must have at least one category")
     @Size(min = 1, message = "Book must belong to at least one category")
     private List<Long> categoryIds;
