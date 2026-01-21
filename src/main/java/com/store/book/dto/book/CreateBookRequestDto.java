@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,8 +29,6 @@ public class CreateBookRequestDto {
     private String description;
     private String coverImage;
     @NotNull(message = "Quantity must not be null")
-    @PositiveOrZero(message = "Quantity must be zero or greater")
-    private Integer quantity;
     @NotEmpty(message = "Book must have at least one category")
     @Size(min = 1, message = "Book must belong to at least one category")
     private List<Long> categoryIds;

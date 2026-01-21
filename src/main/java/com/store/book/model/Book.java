@@ -40,7 +40,7 @@ public class Book {
     private String description;
     private String coverImage;
     @Column(nullable = false)
-    private int quantity;
+    private int quantity = 0;
     @Column(nullable = false)
     private boolean isDeleted = false;
     @ManyToMany
