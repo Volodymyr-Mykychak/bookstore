@@ -12,4 +12,5 @@ public class BookDtoWithoutCategoryIds {
     private BigDecimal price;
     private String description;
     private String coverImage;
+    private int quantity;
 }

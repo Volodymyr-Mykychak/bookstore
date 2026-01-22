@@ -28,6 +28,7 @@ public class CreateBookRequestDto {
     @Size(max = 500, message = "Book description must not exceed 500 characters")
     private String description;
     private String coverImage;
+    @NotNull(message = "Quantity must not be null")
     @NotEmpty(message = "Book must have at least one category")
     @Size(min = 1, message = "Book must belong to at least one category")
     private List<Long> categoryIds;

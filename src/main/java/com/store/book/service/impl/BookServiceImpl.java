@@ -4,12 +4,12 @@ import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.BookSearchParametersDto;
 import com.store.book.dto.book.CreateBookRequestDto;
 import com.store.book.exception.EntityNotFoundException;
+import com.store.book.exception.OrderProcessingException;
 import com.store.book.mapper.BookMapper;
 import com.store.book.model.Book;
 import com.store.book.repository.book.BookRepository;
 import com.store.book.repository.book.BookSpecificationBuilder;
 import com.store.book.service.BookService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +35,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookDto update(Long id, CreateBookRequestDto requestDto) {
         Book book = bookRepository.findById(id)
-                                  .orElseThrow(() -> new EntityNotFoundException(
-                                          "Can't find book by id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Can't find book by id " + id));
         bookMapper.updateBookFromDto(requestDto, book);
         return bookMapper.toDto(bookRepository.save(book));
     }
@@ -48,10 +47,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto findById(Long id) {
-        return bookRepository.findById(id)
-                             .map(bookMapper::toDto)
-                             .orElseThrow(() -> new EntityNotFoundException(
-                                     "Can't find book by id " + id));
+        return bookRepository.findById(id).map(bookMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find book by id " + id));
     }
 
     @Override
@@ -63,10 +60,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> search(BookSearchParametersDto searchParametersDto) {
-        Specification<Book> spec = bookSpecificationBuilder.build(searchParametersDto);
-        return bookRepository.findAll(spec).stream()
-                             .map(bookMapper::toDto)
-                             .toList();
+    public Page<BookDto> search(BookSearchParametersDto params, Pageable pageable) {
+        Specification<Book> spec = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(spec, pageable).map(bookMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public void updateStock(Long bookId, int quantityChange) {
+        int updatedRows = bookRepository.updateQuantity(bookId, quantityChange);
+        if (updatedRows == 0) {
+            throw new OrderProcessingException(
+                    "Not enough stock or book not found for ID: " + bookId);
+        }
     }
 }
