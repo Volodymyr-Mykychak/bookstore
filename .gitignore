@@ -67,3 +67,6 @@ failsafe-reports/
 *.swo
 *.~*
 
+# Docker and Environment variables
+.env
+
