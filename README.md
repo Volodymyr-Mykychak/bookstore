@@ -1,81 +1,52 @@
-# 🐳 Dockerization of Book Store Service
+# 📚 Bookstore Web Service: Testing & Reliability 🧪
 
-This update introduces containerization to the project using **Docker** and **Docker Compose**. This allows anyone to
-run the entire application, including the database, with a single command without needing to install MySQL or Java
-locally.
-
-## 🛠 Features Added
-
-* **Dockerfile**: Configuration for building the Spring Boot application image.
-* **Docker Compose**: Orchestration for the app and a MySQL database.
-* **Environment Configuration**: Secure management of credentials using `.env` files.
+This module focuses on enhancing the project's reliability by implementing a comprehensive suite of tests. We covered
+the existing functionality for both **Book** and **Category** entities across all architectural layers.
 
 ---
 
-## 🚀 How to Run with Docker
+## 🚀 Overview
 
-### 1. Prerequisites
+To ensure a robust application, we implemented three types of testing:
 
-Ensure you have **Docker** and **Docker Compose** installed on your machine.
-
-### 2. Environment Setup
-
-The project uses environment variables for database configuration.
-
-1. Locate the `.env.sample` file in the root directory.
-2. Create a copy named `.env`:
-
-```bash
-cp .env.sample .env
-
-```
-
-3. Open `.env` and fill in your local credentials (they are ignored by Git for security).
-
-### 3. Launching the Application
-
-Run the following command in the terminal:
-
-```bash
-docker-compose up --build
-
-```
-
-This will:
-
-* Build the Spring Boot `.jar` file.
-* Create a Docker image for the application.
-* Start a **MySQL** container.
-* Start the **Book Store** application container and link it to the DB.
+1. **Controller Layer Tests**: Verifying API endpoints and security roles using `MockMvc`.
+2. **Service Layer Tests**: Validating business logic and DTO mapping using `JUnit 5` and `Mockito`.
+3. **Repository Layer Tests**: Testing database interactions and custom queries using `@DataJpaTest` and an `H2`
+   in-memory database.
 
 ---
 
-## ⚙️ Configuration Details
+## 🛠 Features Tested
 
-### Environment Variables
+### 📖 Book Module
 
-To avoid naming conflicts with standard MySQL images, we use custom prefixes:
-| Variable | Description |
-| :--- | :--- |
-| `MYSQLDB_USER` | Database username |
-| `MYSQLDB_ROOT_PASSWORD` | Root password for MySQL |
-| `MYSQLDB_DATABASE` | Name of the schema to create |
-| `MYSQLDB_LOCAL_PORT` | Port exposed on your host machine (default: 3306) |
-| `SPRING_LOCAL_PORT` | Port for the Spring Boot app (default: 8080) |
+* **Controller**: CRUD operations, pagination, and role-based access control (RBAC).
+* **Service**: Logic for saving, updating, and stock management (`updateStock`).
+* **Repository**: Custom JPQL/Native queries for quantity updates and category-based searches.
 
-### Database Access
+### 🏷 Category Module
 
-When the containers are running, you can connect to the database via:
-
-* **Host:** `localhost` (if accessing from your machine)
-* **Host:** `mysqldb` (if accessing from another container)
-* **Port:** Value specified in `MYSQLDB_LOCAL_PORT`
+* **Controller**: Category management and retrieving books by category.
+* **Service**: Category CRUD logic and mapping via `MapStruct`.
+* **Repository**: Standard CRUD and relational mapping.
 
 ---
 
-## 🔒 Security Note
+## 📈 Code Coverage
 
-The `.env` file contains sensitive information and is **excluded from version control** via `.gitignore`. Always use
-`.env.sample` or `.env.template` to share the required structure with other contributors.
+The goal was to achieve at least **50% line coverage** for the core classes. Through rigorous testing of both "happy
+path" and "edge case" scenarios, the following classes have been thoroughly covered:
 
+* `BookController` & `CategoryController`
+* `BookServiceImpl` & `CategoryServiceImpl`
+
+---
+
+## 🧰 Tech Stack
+
+* **JUnit 5** & **AssertJ**: For writing and asserting test cases.
+* **Mockito**: For mocking dependencies in the service layer.
+* **MockMvc**: For simulating HTTP requests to controllers.
+* **H2 Database**: For fast, isolated repository testing.
+* **Spring Security Test**: For verifying authentication and authorization.
 

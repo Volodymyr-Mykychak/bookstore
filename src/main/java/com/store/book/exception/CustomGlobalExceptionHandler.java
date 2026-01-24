@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,13 +19,9 @@ public class CustomGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
-        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors()
-                                            .stream()
-                                            .collect(Collectors.toMap(
-                                                    FieldError::getField,
-                                                    FieldError::getDefaultMessage,
-                                                    (existing, replacement) -> existing
-                                                                     ));
+        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream().collect(
+                Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage,
+                        (existing, replacement) -> existing));
         return buildErrorResponse(HttpStatus.BAD_REQUEST, fieldErrors);
     }
 
@@ -41,18 +38,22 @@ public class CustomGlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         log.error("Unexpected error occurred: ", ex);
-        return buildErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                Map.of("error", "Something went wrong. Please try again later.")
-                                 );
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                Map.of("error", "Something went wrong. Please try again later."));
     }
 
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status,
-                                                                   Object errors) {
+            Object errors) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
         body.put("errors", errors);
         return new ResponseEntity<>(body, status);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN,
+                Map.of("error", "Access denied: you don't have permission for this action"));
     }
 }
