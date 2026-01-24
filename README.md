@@ -1,95 +1,81 @@
-# 📚 Online Book Store API: Order Management System
+# 🐳 Dockerization of Book Store Service
 
-Welcome to the **Order Management** module of the Online Book Store API. This update introduces full checkout
-functionality, order history tracking, and administrative order status management.
+This update introduces containerization to the project using **Docker** and **Docker Compose**. This allows anyone to
+run the entire application, including the database, with a single command without needing to install MySQL or Java
+locally.
 
-## 🚀 Key Features
+## 🛠 Features Added
 
-* 🛒 **Checkout Process**: Convert shopping cart items into a finalized order.
-* 📜 **Order History**: Users can view their past purchases and specific item details.
-* 🛡️ **Admin Controls**: Administrators can manage the order lifecycle (Pending, Shipped, Delivered, etc.).
-* 📊 **Deduplicated Data**: Prices are snapshotted at the moment of purchase within `OrderItem`.
-
----
-
-## 🏗️ Domain Models
-
-### 📦 Order Entity
-
-Represents a completed purchase by a user.
-
-* **Fields**: `id`, `user`, `status`, `total`, `orderDate`, `shippingAddress`, `orderItems`.
-
-### 📑 OrderItem Entity
-
-Represents a specific book within an order.
-
-* **Fields**: `id`, `order`, `book`, `quantity`, `price`.
+* **Dockerfile**: Configuration for building the Spring Boot application image.
+* **Docker Compose**: Orchestration for the app and a MySQL database.
+* **Environment Configuration**: Secure management of credentials using `.env` files.
 
 ---
 
-## 🛠️ API Endpoints
+## 🚀 How to Run with Docker
 
-### 👤 User Operations (`ROLE_USER`)
+### 1. Prerequisites
 
-| Method   | Endpoint                               | Description                                       |
-|----------|----------------------------------------|---------------------------------------------------|
-| **POST** | `/api/orders`                          | Place a new order from the current shopping cart. |
-| **GET**  | `/api/orders`                          | Retrieve the authenticated user's order history.  |
-| **GET**  | `/api/orders/{orderId}/items`          | View all items within a specific order.           |
-| **GET**  | `/api/orders/{orderId}/items/{itemId}` | View details of a specific item in an order.      |
+Ensure you have **Docker** and **Docker Compose** installed on your machine.
 
-### 🔑 Admin Operations (`ROLE_ADMIN`)
+### 2. Environment Setup
 
-| Method    | Endpoint           | Description                                                  |
-|-----------|--------------------|--------------------------------------------------------------|
-| **PATCH** | `/api/orders/{id}` | Update the status of any order (e.g., COMPLETED, DELIVERED). |
+The project uses environment variables for database configuration.
 
----
+1. Locate the `.env.sample` file in the root directory.
+2. Create a copy named `.env`:
 
-## 📝 Request Examples
-
-### Place an Order
-
-**POST** `/api/orders`
-
-```json
-{
-  "shippingAddress": "123 Spring Street, Java City, 01001"
-}
+```bash
+cp .env.sample .env
 
 ```
 
-### Update Order Status (Admin)
+3. Open `.env` and fill in your local credentials (they are ignored by Git for security).
 
-**PATCH** `/api/orders/{id}`
+### 3. Launching the Application
 
-```json
-{
-  "status": "DELIVERED"
-}
+Run the following command in the terminal:
+
+```bash
+docker-compose up --build
 
 ```
 
----
+This will:
 
-## ⚙️ Technical Requirements & Features
-
-* ✅ **Liquibase**: Database migrations for `orders` and `order_items` tables.
-* 🗑️ **Soft Delete**: All entities use a `is_deleted` flag instead of hard deletion.
-* ⚡ **Lazy Loading**: `FetchType.LAZY` used on all relational mappings to optimize performance.
-* 📖 **Pagination & Sorting**: Implemented for all collection endpoints.
-* 🔍 **Swagger UI**: Full API documentation and testing interface.
-* 🛡️ **Validation**: Robust DTO validation using `jakarta.validation`.
+* Build the Spring Boot `.jar` file.
+* Create a Docker image for the application.
+* Start a **MySQL** container.
+* Start the **Book Store** application container and link it to the DB.
 
 ---
 
-## 🔐 Security Matrix
+## ⚙️ Configuration Details
 
-| Role       | Access Level                                                     |
-|------------|------------------------------------------------------------------|
-| **Public** | Auth (Login/Register)                                            |
-| **USER**   | Browse Books, Categories, Manage Own Cart, Place/View Own Orders |
-| **ADMIN**  | Full Book/Category CRUD, Update Any Order Status                 |
+### Environment Variables
+
+To avoid naming conflicts with standard MySQL images, we use custom prefixes:
+| Variable | Description |
+| :--- | :--- |
+| `MYSQLDB_USER` | Database username |
+| `MYSQLDB_ROOT_PASSWORD` | Root password for MySQL |
+| `MYSQLDB_DATABASE` | Name of the schema to create |
+| `MYSQLDB_LOCAL_PORT` | Port exposed on your host machine (default: 3306) |
+| `SPRING_LOCAL_PORT` | Port for the Spring Boot app (default: 8080) |
+
+### Database Access
+
+When the containers are running, you can connect to the database via:
+
+* **Host:** `localhost` (if accessing from your machine)
+* **Host:** `mysqldb` (if accessing from another container)
+* **Port:** Value specified in `MYSQLDB_LOCAL_PORT`
 
 ---
+
+## 🔒 Security Note
+
+The `.env` file contains sensitive information and is **excluded from version control** via `.gitignore`. Always use
+`.env.sample` or `.env.template` to share the required structure with other contributors.
+
+
