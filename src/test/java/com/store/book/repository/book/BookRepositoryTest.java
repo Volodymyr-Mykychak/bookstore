@@ -24,6 +24,7 @@ public class BookRepositoryTest {
     @Test
     @DisplayName("Find all books by category ID")
     @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
             "classpath:database/categories/delete-categories.sql",
             "classpath:database/categories/add-fiction-category.sql",
             "classpath:database/books/add-effective-java-book.sql"
