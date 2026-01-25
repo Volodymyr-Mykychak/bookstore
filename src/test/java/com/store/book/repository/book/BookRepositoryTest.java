@@ -64,7 +64,7 @@ public class BookRepositoryTest {
 
     @Test
     @DisplayName("Update book quantity: should fail if resulting quantity < 0")
-    void updateQuantity_DecrementBelowZero_NoChange() {
+    void updateQuantity_DecrementBelowZero_noChange() {
         Book book = createBook("Refactoring", 2);
         entityManager.persist(book);
         entityManager.flush();

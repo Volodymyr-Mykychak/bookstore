@@ -1,25 +1,15 @@
 package com.store.book.controller;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.store.book.dto.book.BookDto;
 import com.store.book.dto.book.CreateBookRequestDto;
-import com.store.book.exception.EntityNotFoundException;
-import com.store.book.service.impl.BookServiceImpl;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -47,9 +35,6 @@ public class BookControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private BookServiceImpl bookService;
-
     @BeforeEach
     void setUp(@Autowired WebApplicationContext applicationContext) {
         mockMvc = MockMvcBuilders
@@ -61,17 +46,22 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Create book: Valid request")
+    @Sql(scripts = {
+            "classpath:database/categories/add-fiction-category.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
+            "classpath:database/categories/delete-categories.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createBook_Valid_ReturnsCreated() throws Exception {
         CreateBookRequestDto requestDto = getFirstCreateBookRequest();
-        BookDto responseDto = getFirstBookDto();
-
-        when(bookService.save(any())).thenReturn(responseDto);
 
         mockMvc.perform(post("/books")
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(responseDto)));
+                .andExpect(jsonPath("$.title").value(requestDto.getTitle()))
+                .andExpect(jsonPath("$.author").value(requestDto.getAuthor()));
     }
 
     @Test
@@ -89,82 +79,101 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Find all: Returns page of books")
+    @Sql(scripts = {
+            "classpath:database/categories/add-fiction-category.sql",
+            "classpath:database/books/add-effective-java-book.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
+            "classpath:database/categories/delete-categories.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAll_ReturnsPage() throws Exception {
-        when(bookService.findAll(any(Pageable.class)))
-                .thenReturn(new PageImpl<>(List.of(getFirstBookDto())));
-
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)));
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Effective Java"));
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Find by ID: Existing ID")
+    @Sql(scripts = {
+            "classpath:database/categories/add-fiction-category.sql",
+            "classpath:database/books/add-effective-java-book.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
+            "classpath:database/categories/delete-categories.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findById_ExistingId_ReturnsDto() throws Exception {
-        BookDto dto = getFirstBookDto();
-        when(bookService.findById(1L)).thenReturn(dto);
+        Long bookId = 1L;
 
-        mockMvc.perform(get("/books/1"))
+        mockMvc.perform(get("/books/{id}", bookId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.id").value(bookId))
+                .andExpect(jsonPath("$.title").value("Effective Java"));
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Find by ID: Non-existing ID")
     void findById_NotExistingId_ReturnsNotFound() throws Exception {
-        when(bookService.findById(99L)).thenThrow(new EntityNotFoundException("Not found"));
+        Long bookId = 999L;
 
-        mockMvc.perform(get("/books/99"))
+        mockMvc.perform(get("/books/{id}", bookId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Update book: Success")
+    @Sql(scripts = {
+            "classpath:database/categories/add-fiction-category.sql",
+            "classpath:database/books/add-effective-java-book.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
+            "classpath:database/categories/delete-categories.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void update_ValidRequest_ReturnsUpdatedDto() throws Exception {
+        Long bookId = 1L;
         CreateBookRequestDto requestDto = getFirstCreateBookRequest();
-        BookDto responseDto = getFirstBookDto();
-        when(bookService.update(any(), any())).thenReturn(responseDto);
+        requestDto.setTitle("Updated Title");
 
-        mockMvc.perform(put("/books/1")
+        mockMvc.perform(put("/books/{id}", bookId)
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated Title"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Delete book: Success")
+    @Sql(scripts = {
+            "classpath:database/categories/add-fiction-category.sql",
+            "classpath:database/books/add-effective-java-book.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void delete_ValidId_ReturnsNoContent() throws Exception {
-        mockMvc.perform(delete("/books/1"))
-                .andExpect(status().isNoContent());
+        Long bookId = 1L;
 
-        verify(bookService, times(1)).deleteById(1L);
+        mockMvc.perform(delete("/books/{id}", bookId))
+                .andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Delete book as USER: Forbidden")
     void delete_AsUser_ReturnsForbidden() throws Exception {
-        mockMvc.perform(delete("/books/1"))
+        Long bookId = 1L;
+
+        mockMvc.perform(delete("/books/{id}", bookId))
                 .andExpect(status().isForbidden());
     }
 
     private CreateBookRequestDto getFirstCreateBookRequest() {
         CreateBookRequestDto dto = new CreateBookRequestDto();
-        dto.setTitle("Effective Java");
-        dto.setAuthor("Joshua Bloch");
-        dto.setIsbn("9780134685991");
-        dto.setPrice(new BigDecimal("45.00"));
-        dto.setCategoryIds(List.of(1L));
-        return dto;
-    }
-
-    private BookDto getFirstBookDto() {
-        BookDto dto = new BookDto();
-        dto.setId(1L);
         dto.setTitle("Effective Java");
         dto.setAuthor("Joshua Bloch");
         dto.setIsbn("9780134685991");

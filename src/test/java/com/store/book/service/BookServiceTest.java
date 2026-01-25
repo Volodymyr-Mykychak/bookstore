@@ -15,6 +15,7 @@ import com.store.book.mapper.BookMapper;
 import com.store.book.model.Book;
 import com.store.book.repository.book.BookRepository;
 import com.store.book.service.impl.BookServiceImpl;
+import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,17 +34,22 @@ public class BookServiceTest {
     private BookServiceImpl bookService;
 
     @Test
-    @DisplayName("Verify save() method works")
+    @DisplayName("Verify save() method works with valid data")
     void save_ValidRequest_ReturnsBookDto() {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        Book book = new Book();
-        BookDto expected = new BookDto();
-        expected.setId(1L);
+        CreateBookRequestDto requestDto = createBookRequestDto();
+        Book book = createBook(requestDto);
+        BookDto expected = createBookDto(1L, book);
+
         when(bookMapper.toModel(requestDto)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(expected);
+
         BookDto actual = bookService.save(requestDto);
+
+        assertThat(actual).isNotNull();
         assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getTitle()).isEqualTo(requestDto.getTitle());
+        assertThat(actual.getAuthor()).isEqualTo(requestDto.getAuthor());
         verify(bookRepository, times(1)).save(book);
     }
 
@@ -52,11 +58,47 @@ public class BookServiceTest {
     void findById_ExistingId_ReturnsBookDto() {
         Long id = 1L;
         Book book = new Book();
+        book.setId(id);
+        book.setTitle("Effective Java");
+
         BookDto expected = new BookDto();
+        expected.setId(id);
+        expected.setTitle(book.getTitle());
+
         when(bookRepository.findById(id)).thenReturn(Optional.of(book));
         when(bookMapper.toDto(book)).thenReturn(expected);
+
         BookDto actual = bookService.findById(id);
-        assertThat(actual).isEqualTo(expected);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isEqualTo(id);
+        assertThat(actual.getTitle()).isEqualTo("Effective Java");
+    }
+
+    @Test
+    @DisplayName("Verify update() method works")
+    void update_ExistingId_ReturnsUpdatedDto() {
+        Long id = 1L;
+        CreateBookRequestDto requestDto = createBookRequestDto();
+        requestDto.setTitle("Updated Title");
+
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle("Old Title");
+
+        BookDto expected = new BookDto();
+        expected.setId(id);
+        expected.setTitle("Updated Title");
+
+        when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+        when(bookRepository.save(book)).thenReturn(book);
+        when(bookMapper.toDto(book)).thenReturn(expected);
+
+        BookDto actual = bookService.update(id, requestDto);
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getTitle()).isEqualTo("Updated Title");
+        verify(bookMapper).updateBookFromDto(requestDto, book);
     }
 
     @Test
@@ -64,8 +106,10 @@ public class BookServiceTest {
     void findById_NonExistingId_ThrowsException() {
         Long id = 999L;
         when(bookRepository.findById(id)).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> bookService.findById(id)).isInstanceOf(
-                EntityNotFoundException.class).hasMessage("Can't find book by id " + id);
+
+        assertThatThrownBy(() -> bookService.findById(id))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("Can't find book by id " + id);
     }
 
     @Test
@@ -74,8 +118,10 @@ public class BookServiceTest {
         Long bookId = 1L;
         int change = -10;
         when(bookRepository.updateQuantity(bookId, change)).thenReturn(0);
-        assertThatThrownBy(() -> bookService.updateStock(bookId, change)).isInstanceOf(
-                OrderProcessingException.class).hasMessageContaining("Not enough stock");
+
+        assertThatThrownBy(() -> bookService.updateStock(bookId, change))
+                .isInstanceOf(OrderProcessingException.class)
+                .hasMessageContaining("Not enough stock");
     }
 
     @Test
@@ -83,23 +129,37 @@ public class BookServiceTest {
     void deleteById_NonExistingId_ThrowsException() {
         Long id = 1L;
         when(bookRepository.existsById(id)).thenReturn(false);
-        assertThatThrownBy(() -> bookService.deleteById(id)).isInstanceOf(
-                EntityNotFoundException.class);
+
+        assertThatThrownBy(() -> bookService.deleteById(id))
+                .isInstanceOf(EntityNotFoundException.class);
         verify(bookRepository, times(0)).deleteById(anyLong());
     }
 
-    @Test
-    @DisplayName("Verify update() method works")
-    void update_ExistingId_ReturnsUpdatedDto() {
-        Long id = 1L;
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+    private CreateBookRequestDto createBookRequestDto() {
+        CreateBookRequestDto dto = new CreateBookRequestDto();
+        dto.setTitle("Effective Java");
+        dto.setAuthor("Joshua Bloch");
+        dto.setPrice(BigDecimal.valueOf(1000));
+        dto.setIsbn("9780134685991");
+        return dto;
+    }
+
+    private Book createBook(CreateBookRequestDto dto) {
         Book book = new Book();
-        BookDto expected = new BookDto();
-        when(bookRepository.findById(id)).thenReturn(Optional.of(book));
-        when(bookRepository.save(book)).thenReturn(book);
-        when(bookMapper.toDto(book)).thenReturn(expected);
-        BookDto actual = bookService.update(id, requestDto);
-        assertThat(actual).isEqualTo(expected);
-        verify(bookMapper).updateBookFromDto(requestDto, book);
+        book.setTitle(dto.getTitle());
+        book.setAuthor(dto.getAuthor());
+        book.setPrice(dto.getPrice());
+        book.setIsbn(dto.getIsbn());
+        return book;
+    }
+
+    private BookDto createBookDto(Long id, Book book) {
+        BookDto dto = new BookDto();
+        dto.setId(id);
+        dto.setTitle(book.getTitle());
+        dto.setAuthor(book.getAuthor());
+        dto.setPrice(book.getPrice());
+        dto.setIsbn(book.getIsbn());
+        return dto;
     }
 }
