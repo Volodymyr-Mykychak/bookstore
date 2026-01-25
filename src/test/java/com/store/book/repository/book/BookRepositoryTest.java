@@ -23,12 +23,15 @@ public class BookRepositoryTest {
 
     @Test
     @DisplayName("Find all books by category ID")
-    @Sql(scripts = {"classpath:database/categories/add-fiction-category.sql",
-                    "classpath:database/books/add-effective-java-book.sql"},
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {"classpath:database/books/delete-books.sql",
-                    "classpath:database/categories/delete-categories.sql"},
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/categories/delete-categories.sql",
+            "classpath:database/categories/add-fiction-category.sql",
+            "classpath:database/books/add-effective-java-book.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/books/delete-books.sql",
+            "classpath:database/categories/delete-categories.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findAllByCategoriesId_ValidId_ReturnsBooks() {
         Long categoryId = 1L;
         List<Book> books = bookRepository.findAllByCategoriesId(categoryId);
