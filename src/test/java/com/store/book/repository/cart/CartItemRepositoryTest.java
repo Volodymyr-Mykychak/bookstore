@@ -39,7 +39,7 @@ class CartItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find cart item by its ID and User ID")
+    @DisplayName("Знайти товар у кошику за його власним ID та ID користувача")
     @Sql(scripts = {
             "classpath:database/shopping_carts/add-cart-items-data.sql"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -47,14 +47,20 @@ class CartItemRepositoryTest {
             "classpath:database/shopping_carts/clear-shopping-cart-data.sql"
     }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findByIdAndShoppingCartId_ValidIds_ShouldReturnCartItem() {
-        Long cartItemId = 1L;
         Long userId = 100L;
+        Long bookId = 100L;
+
+        CartItem expectedItem = cartItemRepository.findByShoppingCartIdAndBookId(userId, bookId)
+                .orElseThrow(() -> new AssertionError("Product not found in "
+                        + "the database before the test"));
+
+        Long actualCartItemId = expectedItem.getId();
 
         Optional<CartItem> actual = cartItemRepository
-                .findByIdAndShoppingCartId(cartItemId, userId);
+                .findByIdAndShoppingCartId(actualCartItemId, userId);
 
         assertThat(actual).isPresent();
-        assertThat(actual.get().getId()).isEqualTo(cartItemId);
+        assertThat(actual.get().getId()).isEqualTo(actualCartItemId);
         assertThat(actual.get().getShoppingCart().getUser().getId()).isEqualTo(userId);
     }
 }
