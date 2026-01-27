@@ -22,18 +22,16 @@ class CartItemRepositoryTest {
 
     @Test
     @DisplayName("Find cart item by shopping cart ID and book ID")
-    @Sql(scripts = {
-            "classpath:database/shopping_carts/add-cart-items-data.sql"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = {
-            "classpath:database/shopping_carts/clear-shopping-cart-data.sql"
-    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = "classpath:database/shopping_carts/add-cart-items-data.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:database/shopping_carts/clear-shopping-cart-data.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findByShoppingCartIdAndBookId_ValidIds_ShouldReturnCartItem() {
         Long shoppingCartId = 100L;
-        Long bookId = 1L;
+        Long bookId = 100L;
 
-        Optional<CartItem> actual = cartItemRepository
-                .findByShoppingCartIdAndBookId(shoppingCartId, bookId);
+        Optional<CartItem> actual =
+                cartItemRepository.findByShoppingCartIdAndBookId(shoppingCartId, bookId);
 
         assertThat(actual).isPresent();
         assertThat(actual.get().getQuantity()).isEqualTo(5);
