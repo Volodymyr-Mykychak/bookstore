@@ -1,6 +1,9 @@
 package com.store.book.controller;
 
+import com.store.book.dto.book.BookDto;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,13 +58,28 @@ public class BookControllerTest {
             "classpath:database/categories/delete-categories.sql"
     }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createBook_ValidRequestDto_ShouldReturnCreatedBook() throws Exception {
+
         CreateBookRequestDto requestDto = TestDataHelper.createBookRequestDto();
 
-        mockMvc.perform(post("/books")
+        MvcResult result = mockMvc.perform(post("/books")
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value(requestDto.getTitle()));
+                .andReturn();
+
+        BookDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                BookDto.class
+        );
+
+        assertThat(actual).isNotNull();
+        assertThat(actual.getId()).isNotNull();
+        assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id", "categoryIds", "quantity")
+                .isEqualTo(requestDto);
+        assertThat(actual.getCategoryIds())
+                .containsExactlyInAnyOrderElementsOf(requestDto.getCategoryIds());
+        assertThat(actual.getId()).isNotNull();
     }
 
     @Test
@@ -143,11 +161,20 @@ public class BookControllerTest {
         CreateBookRequestDto requestDto = TestDataHelper.createBookRequestDto();
         requestDto.setTitle("Updated Title");
 
-        mockMvc.perform(put("/books/{id}", bookId)
+        MvcResult result = mockMvc.perform(put("/books/{id}", bookId)
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"));
+                .andReturn();
+
+        BookDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                BookDto.class
+        );
+
+        assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("id", "categoryIds", "quantity", "description")
+                .isEqualTo(requestDto);
     }
 
     @Test

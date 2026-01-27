@@ -50,7 +50,7 @@ public class BookServiceTest {
         assertThat(actual).isEqualTo(expected);
         assertThat(actual.getTitle()).isEqualTo(requestDto.getTitle());
         assertThat(actual.getAuthor()).isEqualTo(requestDto.getAuthor());
-        verify(bookRepository, times(1)).save(book);
+        verify(bookRepository).save(book);
     }
 
     @Test
