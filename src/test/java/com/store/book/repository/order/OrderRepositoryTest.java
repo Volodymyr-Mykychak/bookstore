@@ -1,0 +1,101 @@
+package com.store.book.repository.order;
+
+import com.store.book.model.Order;
+import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.jdbc.Sql;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(
+        scripts = {
+                "classpath:database/orders/delete-orders.sql",
+                "classpath:database/books/delete-books.sql",
+                "classpath:database/categories/delete-categories.sql",
+                "classpath:database/categories/add-fiction-category.sql",
+                "classpath:database/books/add-books.sql",
+                "classpath:database/orders/add-orders.sql"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
+        scripts = {
+                "classpath:database/orders/delete-orders.sql",
+                "classpath:database/books/delete-books.sql",
+                "classpath:database/categories/delete-categories.sql"
+        },
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+)
+public class OrderRepositoryTest {
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Test
+    @DisplayName("Find all orders by user ID with pagination")
+    @Sql(
+            scripts = {
+                    "classpath:database/categories/add-fiction-category.sql",
+                    "classpath:database/books/add-books.sql",
+                    "classpath:database/orders/add-orders.sql"
+            },
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
+            scripts = {
+                    "classpath:database/orders/delete-orders.sql",
+                    "classpath:database/books/delete-books.sql",
+                    "classpath:database/categories/delete-categories.sql"
+            },
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+    )
+    void findAllByUserId_ValidUserId_ShouldReturnPageOfOrders() {
+        Long userId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Order> actual = orderRepository.findAllByUserId(userId, pageable);
+
+        Assertions.assertNotNull(actual);
+        Assertions.assertFalse(actual.isEmpty(), "Resulting page should not be empty");
+        Assertions.assertEquals(1, actual.getTotalElements());
+        Assertions.assertNotNull(actual.getContent().get(0).getOrderItems());
+    }
+
+    @Test
+    @DisplayName("Find order by ID and User ID")
+    @Sql(
+            scripts = {
+                    "classpath:database/categories/add-fiction-category.sql",
+                    "classpath:database/books/add-books.sql",
+                    "classpath:database/orders/add-orders.sql"
+            },
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
+            scripts = {
+                    "classpath:database/orders/delete-orders.sql",
+                    "classpath:database/books/delete-books.sql",
+                    "classpath:database/categories/delete-categories.sql"
+            },
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+    )
+    void findByIdAndUserId_ValidIds_ShouldReturnOrder() {
+        Long orderId = 1L;
+        Long userId = 1L;
+
+        Optional<Order> actual = orderRepository.findByIdAndUserId(orderId, userId);
+
+        Assertions.assertTrue(actual.isPresent(), "Order must be found");
+        Assertions.assertEquals(orderId, actual.get().getId());
+        Assertions.assertEquals(userId, actual.get().getUser().getId());
+        Assertions.assertFalse(actual.get().getOrderItems().isEmpty());
+        Assertions.assertNotNull(actual.get().getOrderItems().iterator().next().getBook());
+    }
+}

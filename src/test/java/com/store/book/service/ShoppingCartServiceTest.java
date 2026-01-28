@@ -152,4 +152,26 @@ class ShoppingCartServiceTest {
 
         verify(shoppingCartRepository).save(any(ShoppingCart.class));
     }
+
+    @Test
+    @DisplayName("Remove cart item: Should throw exception if item not found")
+    void removeCartItem_InvalidId_ShouldThrowException() {
+        when(cartItemRepository.findByIdAndShoppingCartId(CART_ITEM_ID, USER_ID))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () ->
+                shoppingCartService.removeCartItem(USER_ID, CART_ITEM_ID));
+    }
+
+    @Test
+    @DisplayName("Update cart item: Should throw exception if item not found")
+    void updateCartItem_InvalidId_ShouldThrowException() {
+        CartItemUpdateDto updateDto = new CartItemUpdateDto();
+
+        when(cartItemRepository.findByIdAndShoppingCartId(CART_ITEM_ID, USER_ID))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () ->
+                shoppingCartService.updateCartItem(USER_ID, CART_ITEM_ID, updateDto));
+    }
 }
