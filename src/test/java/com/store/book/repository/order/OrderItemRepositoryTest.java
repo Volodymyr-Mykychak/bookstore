@@ -23,6 +23,16 @@ public class OrderItemRepositoryTest {
     @Test
     @DisplayName("Find all items by Order ID and User ID - Pagination")
     @Sql(
+            statements = {
+                    "DELETE FROM order_items",
+                    "DELETE FROM orders",
+                    "DELETE FROM books_categories",
+                    "DELETE FROM books",
+                    "DELETE FROM categories"
+            },
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
             scripts = {
                     "classpath:database/categories/add-fiction-category.sql",
                     "classpath:database/books/add-books.sql",
@@ -55,6 +65,16 @@ public class OrderItemRepositoryTest {
     @Test
     @DisplayName("Find specific item by User ID, Order ID and Item ID")
     @Sql(
+            statements = {
+                    "DELETE FROM order_items",
+                    "DELETE FROM orders",
+                    "DELETE FROM books_categories",
+                    "DELETE FROM books",
+                    "DELETE FROM categories"
+            },
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
+    @Sql(
             scripts = {
                     "classpath:database/categories/add-fiction-category.sql",
                     "classpath:database/books/add-books.sql",
@@ -85,6 +105,16 @@ public class OrderItemRepositoryTest {
 
     @Test
     @DisplayName("Find all items by Book ID")
+    @Sql(
+            statements = {
+                    "DELETE FROM order_items",
+                    "DELETE FROM orders",
+                    "DELETE FROM books_categories",
+                    "DELETE FROM books",
+                    "DELETE FROM categories"
+            },
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+    )
     @Sql(
             scripts = {
                     "classpath:database/categories/add-fiction-category.sql",

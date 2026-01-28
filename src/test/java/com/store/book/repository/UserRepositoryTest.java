@@ -24,6 +24,7 @@ class UserRepositoryTest {
     @DisplayName("Знайти користувача за email разом із його ролями")
     @Sql(
             statements = {
+                    "DELETE FROM cart_items WHERE shopping_cart_id = 10",
                     "DELETE FROM shopping_carts WHERE user_id = 10",
                     "DELETE FROM users_roles WHERE user_id = 10",
                     "DELETE FROM users WHERE id = 10"

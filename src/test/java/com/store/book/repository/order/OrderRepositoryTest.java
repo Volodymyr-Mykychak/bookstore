@@ -16,10 +16,17 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
+        statements = {
+                "DELETE FROM order_items",
+                "DELETE FROM orders",
+                "DELETE FROM books_categories",
+                "DELETE FROM books",
+                "DELETE FROM categories"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
         scripts = {
-                "classpath:database/orders/delete-orders.sql",
-                "classpath:database/books/delete-books.sql",
-                "classpath:database/categories/delete-categories.sql",
                 "classpath:database/categories/add-fiction-category.sql",
                 "classpath:database/books/add-books.sql",
                 "classpath:database/orders/add-orders.sql"
@@ -40,22 +47,6 @@ public class OrderRepositoryTest {
 
     @Test
     @DisplayName("Find all orders by user ID with pagination")
-    @Sql(
-            scripts = {
-                    "classpath:database/categories/add-fiction-category.sql",
-                    "classpath:database/books/add-books.sql",
-                    "classpath:database/orders/add-orders.sql"
-            },
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = {
-                    "classpath:database/orders/delete-orders.sql",
-                    "classpath:database/books/delete-books.sql",
-                    "classpath:database/categories/delete-categories.sql"
-            },
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
     void findAllByUserId_ValidUserId_ShouldReturnPageOfOrders() {
         Long userId = 1L;
         Pageable pageable = PageRequest.of(0, 10);
@@ -63,36 +54,20 @@ public class OrderRepositoryTest {
         Page<Order> actual = orderRepository.findAllByUserId(userId, pageable);
 
         Assertions.assertNotNull(actual);
-        Assertions.assertFalse(actual.isEmpty(), "Resulting page should not be empty");
+        Assertions.assertFalse(actual.isEmpty());
         Assertions.assertEquals(1, actual.getTotalElements());
         Assertions.assertNotNull(actual.getContent().get(0).getOrderItems());
     }
 
     @Test
     @DisplayName("Find order by ID and User ID")
-    @Sql(
-            scripts = {
-                    "classpath:database/categories/add-fiction-category.sql",
-                    "classpath:database/books/add-books.sql",
-                    "classpath:database/orders/add-orders.sql"
-            },
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-    )
-    @Sql(
-            scripts = {
-                    "classpath:database/orders/delete-orders.sql",
-                    "classpath:database/books/delete-books.sql",
-                    "classpath:database/categories/delete-categories.sql"
-            },
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-    )
     void findByIdAndUserId_ValidIds_ShouldReturnOrder() {
         Long orderId = 1L;
         Long userId = 1L;
 
         Optional<Order> actual = orderRepository.findByIdAndUserId(orderId, userId);
 
-        Assertions.assertTrue(actual.isPresent(), "Order must be found");
+        Assertions.assertTrue(actual.isPresent());
         Assertions.assertEquals(orderId, actual.get().getId());
         Assertions.assertEquals(userId, actual.get().getUser().getId());
         Assertions.assertFalse(actual.get().getOrderItems().isEmpty());

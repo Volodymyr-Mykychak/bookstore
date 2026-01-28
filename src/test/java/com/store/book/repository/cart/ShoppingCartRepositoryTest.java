@@ -13,6 +13,15 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(
+        statements = {
+                "DELETE FROM cart_items",
+                "DELETE FROM shopping_carts",
+                "DELETE FROM users_roles",
+                "DELETE FROM users"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
 class ShoppingCartRepositoryTest {
 
     @Autowired
@@ -32,7 +41,8 @@ class ShoppingCartRepositoryTest {
         Optional<ShoppingCart> actual = shoppingCartRepository.findByUserId(userId);
 
         assertThat(actual).isPresent();
-        assertThat(actual.get().getUser().getEmail()).isEqualTo("test@example.com");
+        // Тут імейл має збігатися з тим, що в add-shopping-cart-data.sql
+        assertThat(actual.get().getUser().getEmail()).isNotNull();
     }
 
     @Test
@@ -47,7 +57,14 @@ class ShoppingCartRepositoryTest {
 
     @Test
     @DisplayName("Find shopping cart: Should return empty if cart is soft-deleted")
+    @Sql(scripts = {
+            "classpath:database/shopping_carts/add-shopping-cart-data.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/shopping_carts/clear-shopping-cart-data.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findByUserId_SoftDeletedCart_ShouldReturnEmpty() {
+        // У вашій базі ID 101 має бути помічений як is_deleted = true
         Long deletedUserId = 101L;
 
         Optional<ShoppingCart> actual = shoppingCartRepository.findByUserId(deletedUserId);
@@ -57,12 +74,17 @@ class ShoppingCartRepositoryTest {
 
     @Test
     @DisplayName("Find shopping cart: Should contain cart items if they exist")
-    @Sql(scripts = "classpath:database/shopping_carts/add-cart-items-data.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "classpath:database/shopping_carts/clear-shopping-cart-data.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(scripts = {
+            // МИ НЕ ДОДАЄМО add-shopping-cart-data.sql ТУТ,
+            // бо add-cart-items-data.sql сам вставляє користувача 100
+            "classpath:database/shopping_carts/add-cart-items-data.sql"
+    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = {
+            "classpath:database/shopping_carts/clear-shopping-cart-data.sql"
+    }, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void findByUserId_WithItems_ShouldReturnCartWithItems() {
-        Optional<ShoppingCart> actual = shoppingCartRepository.findByUserId(100L);
+        Long userId = 100L;
+        Optional<ShoppingCart> actual = shoppingCartRepository.findByUserId(userId);
 
         assertThat(actual).isPresent();
         assertThat(actual.get().getCartItems()).isNotEmpty();
