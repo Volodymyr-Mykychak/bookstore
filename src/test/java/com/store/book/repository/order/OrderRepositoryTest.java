@@ -56,7 +56,7 @@ public class OrderRepositoryTest {
         Page<Order> actual = orderRepository.findAllByUserId(userId, pageable);
 
         Assertions.assertNotNull(actual);
-        Assertions.assertFalse(actual.isEmpty(), "Expected at least one order in the database");
+        Assertions.assertFalse(actual.isEmpty());
         Assertions.assertEquals(1, actual.getTotalElements());
     }
 
@@ -68,7 +68,7 @@ public class OrderRepositoryTest {
 
         Optional<Order> actual = orderRepository.findByIdAndUserId(orderId, userId);
 
-        Assertions.assertTrue(actual.isPresent(), "Order with ID 1 for User 1 should exist");
+        Assertions.assertTrue(actual.isPresent());
         Assertions.assertEquals(orderId, actual.get().getId());
         Assertions.assertEquals(userId, actual.get().getUser().getId());
     }
