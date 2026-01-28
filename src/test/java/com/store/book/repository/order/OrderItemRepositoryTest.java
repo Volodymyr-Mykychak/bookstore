@@ -18,13 +18,20 @@ import org.springframework.test.context.jdbc.Sql;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
         statements = {
+                "SET REFERENTIAL_INTEGRITY FALSE",
                 "DELETE FROM order_items",
                 "DELETE FROM orders",
                 "DELETE FROM cart_items",
                 "DELETE FROM shopping_carts",
+                "DELETE FROM users_roles",
+                "DELETE FROM users",
                 "DELETE FROM books_categories",
                 "DELETE FROM books",
-                "DELETE FROM categories"
+                "DELETE FROM categories",
+                "SET REFERENTIAL_INTEGRITY TRUE",
+                "INSERT INTO users (id, email, "
+                        + "password, first_name, last_name, shipping_address, is_deleted) "
+                        + "VALUES (1, 'user@example.com', 'pass', 'John', 'Doe', 'Street 1', false)"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
@@ -36,21 +43,12 @@ import org.springframework.test.context.jdbc.Sql;
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-@Sql(
-        scripts = {
-                "classpath:database/orders/delete-orders.sql",
-                "classpath:database/books/delete-books.sql",
-                "classpath:database/categories/delete-categories.sql"
-        },
-        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
-)
 public class OrderItemRepositoryTest {
-
     @Autowired
     private OrderItemRepository orderItemRepository;
 
     @Test
-    @DisplayName("Find all items by Order ID and User ID - Pagination")
+    @DisplayName("Find all items by order ID and user ID")
     void findAllByOrderUserIdAndOrderId_ValidIds_ShouldReturnPageOfItems() {
         Long userId = 1L;
         Long orderId = 1L;
@@ -65,7 +63,7 @@ public class OrderItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find specific item by User ID, Order ID and Item ID")
+    @DisplayName("Find item by order ID, user ID and item ID")
     void findByOrderUserIdAndOrderIdAndId_ValidIds_ShouldReturnItem() {
         Long userId = 1L;
         Long orderId = 1L;
@@ -79,13 +77,15 @@ public class OrderItemRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all items by Book ID")
+    @DisplayName("Find all items by book ID")
     void findAllByBookId_ValidBookId_ShouldReturnList() {
         Long bookId = 1L;
 
         List<OrderItem> actual = orderItemRepository.findAllByBookId(bookId);
 
+        Assertions.assertNotNull(actual);
         Assertions.assertFalse(actual.isEmpty());
+        Assertions.assertEquals(1, actual.size());
         Assertions.assertEquals(bookId, actual.get(0).getBook().getId());
     }
 }

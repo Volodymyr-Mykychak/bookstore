@@ -16,12 +16,27 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
+        statements = {
+                "SET REFERENTIAL_INTEGRITY FALSE",
+                "TRUNCATE TABLE order_items RESTART IDENTITY",
+                "TRUNCATE TABLE orders RESTART IDENTITY",
+                "TRUNCATE TABLE cart_items RESTART IDENTITY",
+                "TRUNCATE TABLE shopping_carts RESTART IDENTITY",
+                "TRUNCATE TABLE users_roles RESTART IDENTITY",
+                "TRUNCATE TABLE users RESTART IDENTITY",
+                "TRUNCATE TABLE books_categories RESTART IDENTITY",
+                "TRUNCATE TABLE books RESTART IDENTITY",
+                "TRUNCATE TABLE categories RESTART IDENTITY",
+                "SET REFERENTIAL_INTEGRITY TRUE",
+                "INSERT INTO users (id, email, password, first_name,"
+                        + " last_name, shipping_address, is_deleted) "
+                        + "VALUES (1, 'user@example.com', 'pass', 'John',"
+                        + " 'Doe', 'Street 1', false)"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
         scripts = {
-                "classpath:database/users/delete-user.sql",
-                "classpath:database/categories/delete-categories.sql",
-                "classpath:database/books/delete-books.sql",
-                "classpath:database/orders/delete-orders.sql",
-                "classpath:database/users/add-user.sql",
                 "classpath:database/categories/add-fiction-category.sql",
                 "classpath:database/books/add-books.sql",
                 "classpath:database/orders/add-orders.sql"
