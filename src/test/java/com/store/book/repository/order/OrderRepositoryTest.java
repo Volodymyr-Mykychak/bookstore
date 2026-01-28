@@ -16,32 +16,17 @@ import org.springframework.test.context.jdbc.Sql;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
-        statements = {
-                "DELETE FROM order_items",
-                "DELETE FROM orders",
-                "DELETE FROM cart_items",
-                "DELETE FROM shopping_carts",
-                "DELETE FROM books_categories",
-                "DELETE FROM books",
-                "DELETE FROM categories"
-        },
-        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-)
-@Sql(
         scripts = {
+                "classpath:database/users/delete-user.sql",
+                "classpath:database/categories/delete-categories.sql",
+                "classpath:database/books/delete-books.sql",
+                "classpath:database/orders/delete-orders.sql",
+                "classpath:database/users/add-user.sql",
                 "classpath:database/categories/add-fiction-category.sql",
                 "classpath:database/books/add-books.sql",
                 "classpath:database/orders/add-orders.sql"
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
-)
-@Sql(
-        scripts = {
-                "classpath:database/orders/delete-orders.sql",
-                "classpath:database/books/delete-books.sql",
-                "classpath:database/categories/delete-categories.sql"
-        },
-        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
 )
 public class OrderRepositoryTest {
     @Autowired
