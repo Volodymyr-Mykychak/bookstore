@@ -16,6 +16,16 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(
+        statements = {
+                "DELETE FROM order_items",
+                "DELETE FROM orders",
+                "DELETE FROM books_categories",
+                "DELETE FROM books",
+                "DELETE FROM categories"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
 public class OrderItemRepositoryTest {
     @Autowired
     private OrderItemRepository orderItemRepository;

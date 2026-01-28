@@ -16,6 +16,23 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Sql(
+        statements = {
+                "DELETE FROM cart_items WHERE shopping_cart_id = 10",
+                "DELETE FROM shopping_carts WHERE user_id = 10",
+                "DELETE FROM users_roles WHERE user_id = 10",
+                "DELETE FROM users WHERE id = 10"
+        },
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
+        scripts = "classpath:database/users/add-user.sql",
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+)
+@Sql(
+        scripts = "classpath:database/users/delete-user.sql",
+        executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD
+)
 class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
