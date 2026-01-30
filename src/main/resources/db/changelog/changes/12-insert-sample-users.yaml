@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-sample-users
+      author: Volodymyr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: email, value: "user1@example.com" }
+              - column: { name: password, value: "$2a$10$2pX9.O6/W.u9QvRzRzRzO.uX7mK.hE2gJ1/I3p5vRzRzRzRzRzRz" }
+              - column: { name: first_name, value: "Ivan" }
+              - column: { name: last_name, value: "Ivanov" }
+              - column: { name: is_deleted, value: 0 }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: email, value: "user2@example.com" }
+              - column: { name: password, value: "$2a$10$2pX9.O6/W.u9QvRzRzRzO.uX7mK.hE2gJ1/I3p5vRzRzRzRzRzRz" }
+              - column: { name: first_name, value: "Petro" }
+              - column: { name: last_name, value: "Petrov" }
+              - column: { name: is_deleted, value: 0 }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: email, value: "user3@example.com" }
+              - column: { name: password, value: "$2a$10$2pX9.O6/W.u9QvRzRzRzO.uX7mK.hE2gJ1/I3p5vRzRzRzRzRzRz" }
+              - column: { name: first_name, value: "Sydir" }
+              - column: { name: last_name, value: "Sydorov" }
+              - column: { name: is_deleted, value: 0 }
