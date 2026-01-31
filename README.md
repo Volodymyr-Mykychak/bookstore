@@ -223,7 +223,7 @@ sequenceDiagram
 ## 📺 Project Demo
 
 See the API in action and a brief code walkthrough:
-👉 **[Watch the Loom Video Demo](https://www.google.com/search?q=INSERT_YOUR_LOOM_LINK_HERE)**
+👉 **[Watch the Video Demo](https://youtu.be/8U_5XR1DqjA)**
 
 ---
 
