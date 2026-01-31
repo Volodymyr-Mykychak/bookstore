@@ -1,5 +1,24 @@
 # 📚 Book store API
 
+## 📌 Table of Contents
+* [🌟 Overview](#-overview)
+* [🏗️ System Architecture](#️-system-architecture)
+* [🔐 Authentication Flow](#-authentication-flow-login--jwt)
+* [🔄 Request Flow](#-request-flow-diagram-create-order)
+* [🛒 Shopping Cart Logic](#-add-item-to-shopping-cart-business-validation)
+* [🛡️ Role-Based Access Control](#️-role-based-access-control-admin-vs-user)
+* [🔍 Book Search & Filtering](#-book-search--filtering-flow)
+* [📺 Project Demo](#-project-demo)
+* [🛠 Technology Stack](#-technology-stack--tools)
+* [🚀 Key Features](#-key-features)
+* [⚙️ Installation & Setup](#️-installation--setup)
+* [📖 Usage & API Documentation](#-usage--api-documentation)
+* [🧪 Testing](#-testing)
+* [💡 Challenges Faced](#-challenges-faced)
+* [🛠 Troubleshooting](#-troubleshooting--clean-start)
+* [📊 Database Management](#-database-management)
+* [🤝 Acknowledgements](#-acknowledgements)
+
 ## 🌟 Overview
 
 **Bookstore app** is a comprehensive RESTful API designed to power a modern digital library or e-commerce platform.
@@ -336,6 +355,14 @@ Use these credentials to obtain your JWT access token.
 }
 
 ```
+#### 2.1 [User2 Authentication](http://localhost:8080/api/swagger-ui/index.html#/Authentication/login)
+
+```json
+{
+  "email": "user1@example.com",
+  "password": "12345678"
+}
+```
 
 #### 3. [Adding a New Category](http://localhost:8080/api/swagger-ui/index.html#/Categories/createCategory)
 
@@ -363,10 +390,42 @@ Use these credentials to obtain your JWT access token.
 }
 
 ```
-
 ####  4.1 [Get books](http://localhost:8080/api/swagger-ui/index.html#/Books/getAllBooks)
-####  4.2 [Get categories](http://localhost:8080/api/swagger-ui/index.html#/Categories/getAllCategories)
-####  4.3 [Get search](http://localhost:8080/api/swagger-ui/index.html#/Books/searchBooks)
+####  4.2 [Get search](http://localhost:8080/api/swagger-ui/index.html#/Books/searchBooks)
+
+```json
+{
+  "titles": ["Java"],
+  "authors": [],
+  "isbns": [],
+  "prices": []
+}
+```
+```json
+{
+  "titles": [],
+  "authors": ["Abraham Silberschatz"],
+  "isbns": [],
+  "prices": []
+}
+```
+```json
+{
+  "titles": [],
+  "authors": [],
+  "isbns": ["9781119456339"],
+  "prices": []
+}
+```
+```json
+{
+  "titles": [],
+  "authors": [],
+  "isbns": [],
+  "prices": ["40", "58"]
+}
+```
+####  4.3 [Get categories](http://localhost:8080/api/swagger-ui/index.html#/Categories/getAllCategories)
 
 #### 5. [Post cart](http://localhost:8080/api/swagger-ui/index.html#/Shopping%20Cart/addBook)
 
@@ -489,7 +548,7 @@ UPDATE users_roles SET role_id = 1 WHERE user_id = 2;
 
 ---
 
-**Developed by:** [Your Name]
+**Developed by:** leadervlod@gmail.com
 *Feel free to reach out for collaboration or questions!*
 
 ---
