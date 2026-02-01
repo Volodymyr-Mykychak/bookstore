@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-categories
+      author: Volodymyr
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Java Programming" }
+              - column: { name: description, value: "Books about Java Core, Spring, and JVM" }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Software Architecture" }
+              - column: { name: description, value: "Design patterns, Clean Code, and system design" }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Web Development" }
+              - column: { name: description, value: "Frontend, Backend, and Fullstack technologies" }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Database Systems" }
+              - column: { name: description, value: "SQL, NoSQL, and database optimization" }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "DevOps & Cloud" }
+              - column: { name: description, value: "Docker, Kubernetes, and CI/CD" }
+        - insert:
+            tableName: categories
+            columns:
+              - column: { name: name, value: "Algorithms & Math" }
+              - column: { name: description, value: "Data structures and computer science fundamentals" }

@@ -19,3 +19,9 @@ databaseChangeLog:
       file: db/changelog/changes/08-create-order-items-table.yaml
   - include:
       file: db/changelog/changes/09-add-quantity-to-books-table.yaml
+  - include:
+      file: db/changelog/changes/10-insert-categories.yaml
+  - include:
+      file: db/changelog/changes/11-insert-books.yaml
+  - include:
+      file: db/changelog/changes/12-insert-sample-users.yaml

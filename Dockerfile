@@ -1,6 +1,6 @@
 # Stage 1: Extraction stage
 # Use an official JDK slim image for a smaller build footprint
-FROM openjdk:17-jdk-slim as builder
+FROM eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR application
 # Define the location of the compiled JAR file
 ARG JAR_FILE=target/*.jar
@@ -9,7 +9,7 @@ COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=layertools -jar application.jar extract
 
 # Final stage
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR application
 # Copy extracted layers from the builder stage.
 # Caching works best when dependencies (rarely changed) are copied before the application code.
@@ -18,5 +18,5 @@ COPY --from=builder application/spring-boot-loader/ ./
 COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 # Use JarLauncher to start the application from the extracted layers
-ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
 EXPOSE 8080

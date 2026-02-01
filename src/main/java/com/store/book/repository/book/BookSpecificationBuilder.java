@@ -18,9 +18,10 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
     public Specification<Book> build(BookSearchParametersDto searchParametersDto) {
         Specification<Book> spec = Specification.where(null);
         Map<BookSpecificationField, String[]> filters = Map.of(
-                BookSpecificationField.TITLE, getValues(searchParametersDto.title()),
-                BookSpecificationField.AUTHOR, getValues(searchParametersDto.author()),
-                BookSpecificationField.ISBN, getValues(searchParametersDto.isbn())
+                BookSpecificationField.TITLE, getValues(searchParametersDto.titles()),
+                BookSpecificationField.AUTHOR, getValues(searchParametersDto.authors()),
+                BookSpecificationField.ISBN, getValues(searchParametersDto.isbns()),
+                BookSpecificationField.PRICE, getValues(searchParametersDto.prices())
         );
         for (var entry : filters.entrySet()) {
             if (entry.getValue().length > 0) {

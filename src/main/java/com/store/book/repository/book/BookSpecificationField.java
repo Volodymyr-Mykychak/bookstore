@@ -3,9 +3,10 @@ package com.store.book.repository.book;
 public enum BookSpecificationField {
     TITLE("title"),
     AUTHOR("author"),
-    ISBN("isbn");
-
+    ISBN("isbn"),
+    PRICE("price");
     private final String key;
+
     BookSpecificationField(String key) {
         this.key = key;
     }

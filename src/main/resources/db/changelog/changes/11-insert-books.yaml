@@ -1,0 +1,246 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books
+      author: Volodymyr
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "You Don't Know JS Yet: Get Started" }
+              - column: { name: author, value: "Kyle Simpson" }
+              - column: { name: isbn, value: "9781633430273" }
+              - column: { name: price, value: 25.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Deep dive into the core mechanisms of JavaScript" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "JavaScript: The Good Parts" }
+              - column: { name: author, value: "Douglas Crockford" }
+              - column: { name: isbn, value: "9780596517748" }
+              - column: { name: price, value: 30.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Uncovering the best features of JavaScript" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Eloquent JavaScript" }
+              - column: { name: author, value: "Marijn Haverbeke" }
+              - column: { name: isbn, value: "9781593279509" }
+              - column: { name: price, value: 35.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "A modern introduction to programming" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Refactoring" }
+              - column: { name: author, value: "Martin Fowler" }
+              - column: { name: isbn, value: "9780134757599" }
+              - column: { name: price, value: 50.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Improving the design of existing code" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Design Patterns" }
+              - column: { name: author, value: "Erich Gamma" }
+              - column: { name: isbn, value: "9780201633610" }
+              - column: { name: price, value: 55.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Elements of reusable object-oriented software" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Head First Design Patterns" }
+              - column: { name: author, value: "Eric Freeman" }
+              - column: { name: isbn, value: "9781492040651" }
+              - column: { name: price, value: 45.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "A brain-friendly guide to design patterns" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Cracking the Coding Interview" }
+              - column: { name: author, value: "Gayle Laakmann McDowell" }
+              - column: { name: isbn, value: "9780984782857" }
+              - column: { name: price, value: 40.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "189 programming questions and solutions" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Test Driven Development: By Example" }
+              - column: { name: author, value: "Kent Beck" }
+              - column: { name: isbn, value: "9780321146533" }
+              - column: { name: price, value: 38.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "The primary strategy for writing quality code" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Domain-Driven Design" }
+              - column: { name: author, value: "Eric Evans" }
+              - column: { name: isbn, value: "9780321125217" }
+              - column: { name: price, value: 60.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Tackling complexity in the heart of software" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Working Effectively with Legacy Code" }
+              - column: { name: author, value: "Michael Feathers" }
+              - column: { name: isbn, value: "9780131177055" }
+              - column: { name: price, value: 46.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Strategies for working with large, untested code bases" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Patterns of Enterprise Application Architecture" }
+              - column: { name: author, value: "Martin Fowler" }
+              - column: { name: isbn, value: "9780321127426" }
+              - column: { name: price, value: 58.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Solutions for common problems in enterprise apps" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Fullstack React" }
+              - column: { name: author, value: "Anthony Accomazzo" }
+              - column: { name: isbn, value: "9781728951669" }
+              - column: { name: price, value: 49.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "The complete guide to ReactJS and friends" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Node.js Design Patterns" }
+              - column: { name: author, value: "Mario Casciaro" }
+              - column: { name: isbn, value: "9781839214110" }
+              - column: { name: price, value: 42.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Design and implement production-grade Node applications" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Clean Coder" }
+              - column: { name: author, value: "Robert Martin" }
+              - column: { name: isbn, value: "9780137081073" }
+              - column: { name: price, value: 35.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "A code of conduct for professional programmers" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Code Complete" }
+              - column: { name: author, value: "Steve McConnell" }
+              - column: { name: isbn, value: "9780735619678" }
+              - column: { name: price, value: 52.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "A practical handbook of software construction" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Grokking Algorithms" }
+              - column: { name: author, value: "Aditya Bhargava" }
+              - column: { name: isbn, value: "9781617292231" }
+              - column: { name: price, value: 34.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "An illustrated guide for programmers" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Continuous Delivery" }
+              - column: { name: author, value: "Jez Humble" }
+              - column: { name: isbn, value: "9780321601919" }
+              - column: { name: price, value: 48.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Reliable software releases through automation" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "The Mythical Man-Month" }
+              - column: { name: author, value: "Frederick Brooks" }
+              - column: { name: isbn, value: "9780201835953" }
+              - column: { name: price, value: 32.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Essays on software engineering" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Database System Concepts" }
+              - column: { name: author, value: "Abraham Silberschatz" }
+              - column: { name: isbn, value: "9780078022159" }
+              - column: { name: price, value: 65.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "The fundamentals of database management" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Operating System Concepts" }
+              - column: { name: author, value: "Abraham Silberschatz" }
+              - column: { name: isbn, value: "9781119456339" }
+              - column: { name: price, value: 62.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Comprehensive guide to OS principles" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Modern Operating Systems" }
+              - column: { name: author, value: "Andrew Tanenbaum" }
+              - column: { name: isbn, value: "9780133591620" }
+              - column: { name: price, value: 68.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "In-depth look at modern OS design" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Computer Networking" }
+              - column: { name: author, value: "James Kurose" }
+              - column: { name: isbn, value: "9780133915624" }
+              - column: { name: price, value: 59.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "A top-down approach to networking" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Java Concurrency in Practice" }
+              - column: { name: author, value: "Brian Goetz" }
+              - column: { name: isbn, value: "9780321349606" }
+              - column: { name: price, value: 47.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "The definitive guide to Java concurrency" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "Pro Git" }
+              - column: { name: author, value: "Scott Chacon" }
+              - column: { name: isbn, value: "9781484200773" }
+              - column: { name: price, value: 36.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Everything you need to know about Git" }
+        - insert:
+            tableName: books
+            columns:
+              - column: { name: title, value: "React Up & Running" }
+              - column: { name: author, value: "Stoyan Stefanov" }
+              - column: { name: isbn, value: "9781491931820" }
+              - column: { name: price, value: 33.00 }
+              - column: { name: quantity, value: 100 }
+              - column: { name: description, value: "Building web applications with React" }
+
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: { name: book_id, value: 1 }
+              - column: { name: category_id, value: 1 }
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: { name: book_id, value: 2 }
+              - column: { name: category_id, value: 2 }
+        - insert:
+            tableName: books_categories
+            columns:
+              - column: { name: book_id, value: 3 }
+              - column: { name: category_id, value: 1 }
