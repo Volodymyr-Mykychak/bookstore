@@ -41,11 +41,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<BookDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable).map(bookMapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookDto findById(Long id) {
         return bookRepository.findById(id).map(bookMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book by id " + id));
@@ -60,6 +62,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<BookDto> search(BookSearchParametersDto params, Pageable pageable) {
         Specification<Book> spec = bookSpecificationBuilder.build(params);
         return bookRepository.findAll(spec, pageable).map(bookMapper::toDto);
